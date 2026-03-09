@@ -1255,8 +1255,8 @@
                         <h3>Inbound Application</h3>
                         <p>Documentos de inbounds.</p>
                         <div class="folder-card-meta">
-                            <span>1.2 GB</span>
-                            <span>68 Candidatos</span>
+                            <span id="folder-inbound-size">-- MB</span>
+                            <span id="folder-inbound-count">0 Arquivos</span>
                         </div>
                     </div>
 
@@ -1265,8 +1265,8 @@
                         <h3>Outbound Application</h3>
                         <p>Documentos de Outbounds.</p>
                         <div class="folder-card-meta">
-                            <span>1.5 GB</span>
-                            <span>74 Candidatos</span>
+                            <span id="folder-outbound-size">-- MB</span>
+                            <span id="folder-outbound-count">0 Arquivos</span>
                         </div>
                     </div>
                 </div>
@@ -1898,6 +1898,8 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
                     let total = 0;
                     let inboundCount = 0;
                     let outboundCount = 0;
+                    let inboundSizeMB = 0;
+                    let outboundSizeMB = 0;
 
                     const inboundList = document.getElementById('inbound-file-list');
                     const outboundList = document.getElementById('outbound-file-list');
@@ -1982,11 +1984,14 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
 
                         activityList.innerHTML += activityItemHTML;
 
+                        const fileSizeMB = parseFloat(data.size) || 0;
                         if (data.type === 'inbound') {
                             inboundCount++;
+                            inboundSizeMB += fileSizeMB;
                             inboundList.innerHTML += itemHTML;
                         } else if (data.type === 'outbound') {
                             outboundCount++;
+                            outboundSizeMB += fileSizeMB;
                             outboundList.innerHTML += itemHTML;
                         }
                     });
@@ -1994,6 +1999,13 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
                     document.getElementById('stat-total-apps').innerText = total;
                     document.getElementById('stat-inbound').innerText = inboundCount;
                     document.getElementById('stat-outbound').innerText = outboundCount;
+
+                    // Update folder card meta with real data
+                    const formatSize = (mb) => mb >= 1024 ? (mb / 1024).toFixed(1) + ' GB' : mb.toFixed(1) + ' MB';
+                    document.getElementById('folder-inbound-size').innerText = formatSize(inboundSizeMB);
+                    document.getElementById('folder-inbound-count').innerText = inboundCount + (inboundCount === 1 ? ' Arquivo' : ' Arquivos');
+                    document.getElementById('folder-outbound-size').innerText = formatSize(outboundSizeMB);
+                    document.getElementById('folder-outbound-count').innerText = outboundCount + (outboundCount === 1 ? ' Arquivo' : ' Arquivos');
                 });
 
             } catch (error) {

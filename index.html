@@ -1481,7 +1481,6 @@
                             style="padding:12px 18px;border:1.5px solid #e0e7ef;border-radius:10px;font-size:0.95rem;outline:none;font-family:inherit;background:white;cursor:pointer;">
                             <option value="Membro">Membro</option>
                             <option value="Coordenador">Coordenador</option>
-                            <option value="Admin">Admin</option>
                         </select>
                         <button onclick="window.inviteTeamMember()"
                             style="padding:12px 24px;background:var(--rotary-royal-blue);color:#fff;border:none;border-radius:10px;font-size:0.95rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 0.2s;"
@@ -2239,7 +2238,12 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
             const feedback = document.getElementById('invite-feedback');
 
             const email = emailInput.value.trim();
-            const role = roleSelect.value;
+            let role = roleSelect.value;
+
+            // Prevent users from being created as Admin manually through dev tools or API
+            if (role === 'Admin') {
+                role = 'Coordenador';
+            }
 
             if (!email) {
                 feedback.innerText = 'Por favor, insira um e-mail válido.';

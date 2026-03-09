@@ -1153,12 +1153,7 @@
                 <i class="fas fa-plane-departure"></i>
                 Outbound Application
             </a>
-            <div style="margin: 30px 15px 10px 15px; height: 1px; background: rgba(255,255,255,0.1);"></div>
-            <a class="nav-item" onclick="openAIHub()"
-                style="background: rgba(142, 68, 173, 0.2); border-left: 3px solid #8e44ad;">
-                <i class="fas fa-brain" style="color: #e056fd;"></i>
-                <span style="color: white; font-weight: 600;">Assistente de Análise IA</span>
-            </a>
+
             <a class="nav-item" style="margin-top: 20px; color: rgba(255,255,255,0.6);" data-view="settings">
                 <i class="fas fa-cog"></i>
                 Configurações da Equipe
@@ -1365,9 +1360,6 @@
                             style="text-align: right; display:flex; justify-content:flex-end; align-items:center; gap: 15px;">
                             <span>Mar 05, 2024</span>
                             <div class="file-actions">
-                                <button class="action-btn" title="AI Document Analysis"
-                                    onclick="openAIAssistant('Application_Hans_Müller_GE.pdf', 'Hans Müller')"><i
-                                        class="fas fa-brain" style="color: #8e44ad;"></i></button>
                                 <button class="action-btn"><i class="fas fa-download"></i></button>
                                 <button class="action-btn"><i class="fas fa-trash"></i></button>
                             </div>
@@ -1446,9 +1438,6 @@
                             style="text-align: right; display:flex; justify-content:flex-end; align-items:center; gap: 15px;">
                             <span>Mar 07, 2024</span>
                             <div class="file-actions">
-                                <button class="action-btn" title="AI Document Analysis"
-                                    onclick="openAIAssistant('Application_Pedro_Silva_BR.pdf', 'Pedro Silva')"><i
-                                        class="fas fa-brain" style="color: #8e44ad;"></i></button>
                                 <button class="action-btn"><i class="fas fa-download"></i></button>
                                 <button class="action-btn"><i class="fas fa-trash"></i></button>
                             </div>
@@ -1498,340 +1487,261 @@
         </div>
     </main>
 
-    <!-- AI Assistant Modal -->
-    <div class="modal-overlay ai-modal" id="ai-modal">
+
+
+    <!-- Upload Modal -->
+    <div class="modal-overlay" id="upload-modal">
         <div class="modal-content">
-            <div class="ai-modal-header">
-                <h3><i class="fas fa-brain"></i> YEP Inteligência de Candidaturas</h3>
-                <button class="close-modal" onclick="closeAIModal()"><i class="fas fa-times"></i></button>
+            <div class="modal-header">
+                <h3 id="modal-title">Enviar para Pasta</h3>
+                <button class="close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
             </div>
-            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+            <div class="modal-body">
+                <p style="margin-bottom: 20px; color: var(--text-light); font-size: 0.9rem;">
+                    Os arquivos enviados serão sincronizados e compartilhados com todos os membros da equipe YEP.
+                </p>
 
-                <div class="ai-status-container" id="ai-status-box">
-                    <div class="ai-status-text" id="ai-status-text">
-                        <i class="fas fa-cog ai-spinner"></i> Iniciando Análise Profunda de Documentos para <span
-                            id="ai-target-student" style="font-weight:700;">Aluno</span>...
+                <div class="upload-area" onclick="document.getElementById('real-file-input').click()">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <h4>Arraste e solte seus arquivos aqui</h4>
+                    <p style="color: var(--text-light); margin-top: 8px; font-size: 0.85rem;">ou clique para
+                        selecionar do
+                        seu computador</p>
+                    <p style="color: var(--rotary-sky-blue); margin-top: 15px; font-size: 0.8rem; font-weight: 500;">
+                        Tamanho
+                        máximo: 50MB</p>
+                </div>
+                <input type="file" id="real-file-input" style="display: none;"
+                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png" onchange="window.handleFileUpload(event)">
+
+                <div id="upload-progress" style="display: none; margin-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem;">
+                        <span id="upload-filename">Enviando arquivo...</span>
+                        <span id="upload-percentage">0%</span>
                     </div>
-                    <div
-                        style="height: 4px; background: #e0e0e0; border-radius: 2px; overflow: hidden; margin-top: 15px;">
-                        <div id="ai-progress-bar"
-                            style="height: 100%; width: 0%; box-shadow: 0 0 10px #8e44ad; background: linear-gradient(90deg, #8e44ad, #e056fd); transition: width 0.3s ease;">
+                    <div style="height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden;">
+                        <div id="upload-bar"
+                            style="height: 100%; width: 0%; background: var(--rotary-azure); transition: width 0.3s ease;">
                         </div>
-                    </div>
-                    <div class="ai-report-section" id="ai-report">
-
-                        <div class="ai-report-card">
-                            <h4><i class="fas fa-clipboard-check"></i> Preenchimento e Validação do Formulário</h4>
-                            <ul class="ai-checklist" id="ai-validation-list">
-                                <!-- Populated by JS -->
-                            </ul>
-                        </div>
-
-                        <div class="ai-report-card">
-                            <h4><i class="fas fa-user-astronaut"></i> Perfil Comportamental e Psicológico</h4>
-                            <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 15px;">Baseado em
-                                análise semântica da Carta de Motivação do Aluno e das Cartas dos Pais.</p>
-
-                            <div style="margin-bottom: 15px;">
-                                <span class="ai-profile-tag"><i class="fas fa-hiking"></i> Ativo ao Ar Livre</span>
-                                <span class="ai-profile-tag"><i class="fas fa-book"></i> Focado nos Estudos</span>
-                                <span class="ai-profile-tag"><i class="fas fa-dog"></i> Amigo dos Animais</span>
-                                <span class="ai-profile-tag"><i class="fas fa-hands-helping"></i> Empático</span>
-                            </div>
-
-                            <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
-                                O candidato demonstra alta capacidade de adaptação e forte desejo de imersão cultural. A
-                                análise léxica da carta dos pais indica uma criação estruturada, mas com apoio à
-                                independência. A carta do aluno demonstra grande curiosidade, pouca ansiedade em relação
-                                a sair de casa e preferência por ambientes ativos e dinâmicos.
-                            </p>
-                        </div>
-
-                        <div class="ai-report-card" style="border-left: 4px solid var(--rotary-sky-blue);">
-                            <h4><i class="fas fa-home"></i> Recomendação de Família Anfitriã e Ambiente</h4>
-                            <div class="ai-recommendation">
-                                <strong>Cenário Ideal de Colocação:</strong>
-                                <br><br>
-                                Este aluno tem grande probabilidade de se destacar em uma <strong>cidade ativa de porte
-                                    médio ou em ambiente suburbano</strong>.
-                                <br><br>
-                                Dado seu forte foco acadêmico e interesse em atividades ao ar livre, uma família
-                                anfitriã com irmãos adolescentes ou que frequentemente realiza passeios nos finais de
-                                semana (trilhas, esportes, eventos comunitários) seria ideal.
-                                <br><br>
-                                <em>Evitar:</em> Ambientes rurais muito isolados ou famílias excessivamente sedentárias,
-                                pois o alto nível de energia do candidato pode gerar leve atrito se não canalizado em
-                                atividades na escola ou na comunidade.
-                            </div>
-                        </div>
-
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button class="btn-outline" onclick="closeAIModal()">Fechar Relatório</button>
-                    <button class="btn" style="background: #8e44ad; color: white; border: none;"
-                        onclick="exportAIReport()"><i class="fas fa-file-export"></i> Exportar PDF</button>
-                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline" onclick="closeModal()">Cancelar</button>
+                <button class="btn" style="opacity: 0.5; cursor: not-allowed;" id="save-upload-btn">Concluído</button>
             </div>
         </div>
+    </div>
 
-        <!-- Upload Modal -->
-        <div class="modal-overlay" id="upload-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 id="modal-title">Enviar para Pasta</h3>
-                    <button class="close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
-                </div>
-                <div class="modal-body">
-                    <p style="margin-bottom: 20px; color: var(--text-light); font-size: 0.9rem;">
-                        Os arquivos enviados serão sincronizados e compartilhados com todos os membros da equipe YEP.
-                    </p>
+    <script type="module">
+        // ============================================================
+        // Firebase SDK Imports (consolidated here - single module block)
+        // ============================================================
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import {
+            getAuth, signInWithPopup, GoogleAuthProvider,
+            signInWithEmailAndPassword, createUserWithEmailAndPassword,
+            onAuthStateChanged, signOut
+        } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+        import {
+            getFirestore, collection, onSnapshot, query,
+            orderBy, limit, addDoc, doc, deleteDoc, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import {
+            getStorage, ref, uploadBytesResumable, getDownloadURL
+        } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-storage.js";
 
-                    <div class="upload-area" onclick="document.getElementById('real-file-input').click()">
-                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                        <h4>Arraste e solte seus arquivos aqui</h4>
-                        <p style="color: var(--text-light); margin-top: 8px; font-size: 0.85rem;">ou clique para
-                            selecionar do
-                            seu computador</p>
-                        <p
-                            style="color: var(--rotary-sky-blue); margin-top: 15px; font-size: 0.8rem; font-weight: 500;">
-                            Tamanho
-                            máximo: 50MB</p>
-                    </div>
-                    <input type="file" id="real-file-input" style="display: none;"
-                        accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
-                        onchange="window.handleFileUpload(event)">
+        const firebaseConfig = {
+            apiKey: "AIzaSyA7cu4j4QasnBAt7_2jtAf6nS1mMKtXk-E",
+            authDomain: "yep-app-new-project-12345.firebaseapp.com",
+            projectId: "yep-app-new-project-12345",
+            storageBucket: "yep-app-new-project-12345.firebasestorage.app",
+            messagingSenderId: "343279430124",
+            appId: "1:343279430124:web:74d164c0d6c75e01db78c9"
+        };
 
-                    <div id="upload-progress" style="display: none; margin-top: 20px;">
-                        <div
-                            style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem;">
-                            <span id="upload-filename">Enviando arquivo...</span>
-                            <span id="upload-percentage">0%</span>
-                        </div>
-                        <div style="height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden;">
-                            <div id="upload-bar"
-                                style="height: 100%; width: 0%; background: var(--rotary-azure); transition: width 0.3s ease;">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn-outline" onclick="closeModal()">Cancelar</button>
-                    <button class="btn" style="opacity: 0.5; cursor: not-allowed;"
-                        id="save-upload-btn">Concluído</button>
-                </div>
-            </div>
-        </div>
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        const googleProvider = new GoogleAuthProvider();
 
-        <script type="module">
-            // ============================================================
-            // Firebase SDK Imports (consolidated here - single module block)
-            // ============================================================
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
-            import {
-                getAuth, signInWithPopup, GoogleAuthProvider,
-                signInWithEmailAndPassword, createUserWithEmailAndPassword,
-                onAuthStateChanged, signOut
-            } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
-            import {
-                getFirestore, collection, onSnapshot, query,
-                orderBy, limit, addDoc, doc, deleteDoc, serverTimestamp
-            } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-            import {
-                getStorage, ref, uploadBytesResumable, getDownloadURL
-            } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-storage.js";
+        console.log("Firebase module loaded, auth:", !!auth);
 
-            const firebaseConfig = {
-                apiKey: "AIzaSyA7cu4j4QasnBAt7_2jtAf6nS1mMKtXk-E",
-                authDomain: "yep-app-new-project-12345.firebaseapp.com",
-                projectId: "yep-app-new-project-12345",
-                storageBucket: "yep-app-new-project-12345.firebasestorage.app",
-                messagingSenderId: "343279430124",
-                appId: "1:343279430124:web:74d164c0d6c75e01db78c9"
-            };
+        // ============================================================
+        // Titles and icons for different views
+        // ============================================================
+        const viewData = {
+            'dashboard': { title: 'Visão Geral do Painel', icon: 'fa-chart-pie' },
+            'inbound': { title: 'Inbound Application', icon: 'fa-plane-arrival' },
+            'outbound': { title: 'Outbound Application', icon: 'fa-plane-departure' },
+            'settings': { title: 'Configurações da Equipe', icon: 'fa-cog' }
+        };
+        // Navigation Logic
+        const navItems = document.querySelectorAll('.nav-item[data-view]');
+        const viewSections = document.querySelectorAll('.view-section');
+        const pageTitle = document.getElementById('page-title');
 
-            const app = initializeApp(firebaseConfig);
-            const auth = getAuth(app);
-            const db = getFirestore(app);
-            const storage = getStorage(app);
-            const googleProvider = new GoogleAuthProvider();
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const targetViewId = item.getAttribute('data-view');
+                if (!targetViewId) return;
 
-            console.log("Firebase module loaded, auth:", !!auth);
-
-            // ============================================================
-            // Titles and icons for different views
-            // ============================================================
-            const viewData = {
-                'dashboard': { title: 'Visão Geral do Painel', icon: 'fa-chart-pie' },
-                'inbound': { title: 'Inbound Application', icon: 'fa-plane-arrival' },
-                'outbound': { title: 'Outbound Application', icon: 'fa-plane-departure' },
-                'settings': { title: 'Configurações da Equipe', icon: 'fa-cog' }
-            };
-            // Navigation Logic
-            const navItems = document.querySelectorAll('.nav-item[data-view]');
-            const viewSections = document.querySelectorAll('.view-section');
-            const pageTitle = document.getElementById('page-title');
-
-            navItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    const targetViewId = item.getAttribute('data-view');
-                    if (!targetViewId) return;
-
-                    window.switchView(targetViewId);
-                });
+                window.switchView(targetViewId);
             });
+        });
 
-            window.switchView = function (viewId) {
-                // Update active nav
-                navItems.forEach(nav => nav.classList.remove('active'));
-                const activeNav = document.querySelector(`.nav-item[data-view="${viewId}"]`);
-                if (activeNav) activeNav.classList.add('active');
+        window.switchView = function (viewId) {
+            // Update active nav
+            navItems.forEach(nav => nav.classList.remove('active'));
+            const activeNav = document.querySelector(`.nav-item[data-view="${viewId}"]`);
+            if (activeNav) activeNav.classList.add('active');
 
-                // Update sections
-                viewSections.forEach(section => section.classList.remove('active'));
-                const activeSection = document.getElementById(`view-${viewId}`);
-                if (activeSection) activeSection.classList.add('active');
+            // Update sections
+            viewSections.forEach(section => section.classList.remove('active'));
+            const activeSection = document.getElementById(`view-${viewId}`);
+            if (activeSection) activeSection.classList.add('active');
 
-                // Update Title
-                const data = viewData[viewId];
-                if (data) {
-                    pageTitle.innerHTML = `<i class="fas ${data.icon}"></i> ${data.title}`;
-                }
+            // Update Title
+            const data = viewData[viewId];
+            if (data) {
+                pageTitle.innerHTML = `<i class="fas ${data.icon}"></i> ${data.title}`;
+            }
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('upload-modal');
+        const modalTitle = document.getElementById('modal-title');
+        let currentUploadTarget = '';
+
+        window.openUploadModal = function (folderName) {
+            modalTitle.innerText = `Upload to ${folderName} Application`;
+            currentUploadTarget = folderName.toLowerCase();
+            modal.classList.add('active');
+
+            // Reset upload UI
+            document.getElementById('upload-progress').style.display = 'none';
+            document.getElementById('upload-bar').style.width = '0%';
+            document.getElementById('save-upload-btn').style.opacity = '0.5';
+            document.getElementById('save-upload-btn').style.cursor = 'not-allowed';
+            document.getElementById('save-upload-btn').onclick = null;
+        }
+
+        window.closeModal = function () {
+            modal.classList.remove('active');
+        }
+
+        // Real file upload logic
+        window.handleFileUpload = async function (event) {
+            console.log("handleFileUpload started", event.target.files);
+            const file = event.target.files[0];
+            if (!file) {
+                console.log("No file selected");
+                return;
             }
 
-            // Modal Logic
-            const modal = document.getElementById('upload-modal');
-            const modalTitle = document.getElementById('modal-title');
-            let currentUploadTarget = '';
-
-            window.openUploadModal = function (folderName) {
-                modalTitle.innerText = `Upload to ${folderName} Application`;
-                currentUploadTarget = folderName.toLowerCase();
-                modal.classList.add('active');
-
-                // Reset upload UI
-                document.getElementById('upload-progress').style.display = 'none';
-                document.getElementById('upload-bar').style.width = '0%';
-                document.getElementById('save-upload-btn').style.opacity = '0.5';
-                document.getElementById('save-upload-btn').style.cursor = 'not-allowed';
-                document.getElementById('save-upload-btn').onclick = null;
+            const user = auth.currentUser;
+            console.log("Current user:", user ? user.email : "NOT LOGGED IN");
+            if (!user) {
+                alert("Você deve estar logado para enviar arquivos.");
+                window.closeModal();
+                return;
             }
 
-            window.closeModal = function () {
-                modal.classList.remove('active');
-            }
+            const progressContainer = document.getElementById('upload-progress');
+            const progressBar = document.getElementById('upload-bar');
+            const percentText = document.getElementById('upload-percentage');
+            const filenameText = document.getElementById('upload-filename');
+            const saveBtn = document.getElementById('save-upload-btn');
 
-            // Real file upload logic
-            window.handleFileUpload = async function (event) {
-                console.log("handleFileUpload started", event.target.files);
-                const file = event.target.files[0];
-                if (!file) {
-                    console.log("No file selected");
-                    return;
-                }
+            progressContainer.style.display = 'block';
+            filenameText.innerText = file.name;
+            progressBar.style.width = '0%';
+            progressBar.style.background = 'var(--rotary-azure)';
+            percentText.innerText = '0%';
 
-                const user = auth.currentUser;
-                console.log("Current user:", user ? user.email : "NOT LOGGED IN");
-                if (!user) {
-                    alert("Você deve estar logado para enviar arquivos.");
-                    window.closeModal();
-                    return;
-                }
+            try {
+                // Create Storage Reference
+                console.log("Generating storage path...");
+                const storagePath = `applications/${currentUploadTarget}/${Date.now()}_${file.name}`;
+                console.log("Storage path:", storagePath);
+                const storageRef = ref(storage, storagePath);
 
-                const progressContainer = document.getElementById('upload-progress');
-                const progressBar = document.getElementById('upload-bar');
-                const percentText = document.getElementById('upload-percentage');
-                const filenameText = document.getElementById('upload-filename');
-                const saveBtn = document.getElementById('save-upload-btn');
+                console.log("Starting upload task...");
+                const uploadTask = uploadBytesResumable(storageRef, file);
 
-                progressContainer.style.display = 'block';
-                filenameText.innerText = file.name;
-                progressBar.style.width = '0%';
-                progressBar.style.background = 'var(--rotary-azure)';
-                percentText.innerText = '0%';
+                uploadTask.on('state_changed',
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        console.log(`Upload progress: ${Math.floor(progress)}%`);
+                        progressBar.style.width = `${progress}%`;
+                        percentText.innerText = `${Math.floor(progress)}%`;
+                    },
+                    (error) => {
+                        console.error("Firebase Storage Upload Error:", error);
+                        percentText.innerText = 'Erro no envio: ' + error.code;
+                        progressBar.style.background = '#e74c3c';
+                    },
+                    async () => {
+                        console.log("Upload task completed successfully! Getting download URL...");
+                        try {
+                            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                            console.log("Download URL obtained:", downloadURL);
 
-                try {
-                    // Create Storage Reference
-                    console.log("Generating storage path...");
-                    const storagePath = `applications/${currentUploadTarget}/${Date.now()}_${file.name}`;
-                    console.log("Storage path:", storagePath);
-                    const storageRef = ref(storage, storagePath);
+                            // Save metadata to Firestore
+                            console.log("Saving metadata to Firestore...");
+                            const newDoc = {
+                                name: file.name,
+                                size: (file.size / (1024 * 1024)).toFixed(2) + " MB",
+                                uploaderId: user.uid,
+                                uploaderName: user.displayName || user.email.split('@')[0],
+                                type: currentUploadTarget, // 'inbound' or 'outbound'
+                                url: downloadURL,
+                                path: storagePath,
+                                timestamp: serverTimestamp()
+                            };
 
-                    console.log("Starting upload task...");
-                    const uploadTask = uploadBytesResumable(storageRef, file);
+                            await addDoc(collection(db, "applications"), newDoc);
+                            console.log("Firestore document created successfully.");
 
-                    uploadTask.on('state_changed',
-                        (snapshot) => {
-                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                            console.log(`Upload progress: ${Math.floor(progress)}%`);
-                            progressBar.style.width = `${progress}%`;
-                            percentText.innerText = `${Math.floor(progress)}%`;
-                        },
-                        (error) => {
-                            console.error("Firebase Storage Upload Error:", error);
-                            percentText.innerText = 'Erro no envio: ' + error.code;
+                            progressBar.style.width = `100%`;
+                            percentText.innerText = 'Concluído!';
+                            progressBar.style.background = '#2ecc71';
+
+                            saveBtn.style.opacity = '1';
+                            saveBtn.style.cursor = 'pointer';
+                            saveBtn.onclick = () => {
+                                window.closeModal();
+                                // Reset input so the same file can be picked again
+                                document.getElementById('real-file-input').value = '';
+                            };
+                        } catch (e) {
+                            console.error("Error finalizing upload in completion callback:", e);
+                            percentText.innerText = 'Erro ao finalizar';
                             progressBar.style.background = '#e74c3c';
-                        },
-                        async () => {
-                            console.log("Upload task completed successfully! Getting download URL...");
-                            try {
-                                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                                console.log("Download URL obtained:", downloadURL);
-
-                                // Save metadata to Firestore
-                                console.log("Saving metadata to Firestore...");
-                                const newDoc = {
-                                    name: file.name,
-                                    size: (file.size / (1024 * 1024)).toFixed(2) + " MB",
-                                    uploaderId: user.uid,
-                                    uploaderName: user.displayName || user.email.split('@')[0],
-                                    type: currentUploadTarget, // 'inbound' or 'outbound'
-                                    url: downloadURL,
-                                    path: storagePath,
-                                    timestamp: serverTimestamp()
-                                };
-
-                                await addDoc(collection(db, "applications"), newDoc);
-                                console.log("Firestore document created successfully.");
-
-                                progressBar.style.width = `100%`;
-                                percentText.innerText = 'Concluído!';
-                                progressBar.style.background = '#2ecc71';
-
-                                saveBtn.style.opacity = '1';
-                                saveBtn.style.cursor = 'pointer';
-                                saveBtn.onclick = () => {
-                                    window.closeModal();
-                                    // Reset input so the same file can be picked again
-                                    document.getElementById('real-file-input').value = '';
-                                };
-                            } catch (e) {
-                                console.error("Error finalizing upload in completion callback:", e);
-                                percentText.innerText = 'Erro ao finalizar';
-                                progressBar.style.background = '#e74c3c';
-                            }
                         }
-                    );
-                } catch (err) {
-                    console.error("Initial upload setup error:", err);
-                    percentText.innerText = 'Erro ao iniciar';
-                    progressBar.style.background = '#e74c3c';
-                }
+                    }
+                );
+            } catch (err) {
+                console.error("Initial upload setup error:", err);
+                percentText.innerText = 'Erro ao iniciar';
+                progressBar.style.background = '#e74c3c';
             }
+        }
 
-            // Add fake file to list
-            function addMockFile(targetList) {
-                const listId = `${targetList}-file-list`;
-                const list = document.getElementById(listId);
-                if (!list) return;
+        // Add fake file to list
+        function addMockFile(targetList) {
+            const listId = `${targetList}-file-list`;
+            const list = document.getElementById(listId);
+            if (!list) return;
 
-                const newItem = document.createElement('div');
-                newItem.className = 'file-item';
+            const newItem = document.createElement('div');
+            newItem.className = 'file-item';
 
-                const now = new Date();
-                const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-                newItem.innerHTML = `
+            newItem.innerHTML = `
                 <div class="file-name">
                     <div class="file-icon pdf"><i class="fas fa-file-pdf"></i></div>
                     New_Document_${Math.floor(Math.random() * 1000)}.pdf
@@ -1850,183 +1760,183 @@
                 </div>
             `;
 
-                // Insert after header
-                list.insertBefore(newItem, list.children[1]);
-            }
+            // Insert after header
+            list.insertBefore(newItem, list.children[1]);
+        }
 
-            // AI RYE Reviewer Prompt (Full System Protocol)
-            const RYE_REVIEWER_PROMPT = `
+        // AI RYE Reviewer Prompt (Full System Protocol)
+        const RYE_REVIEWER_PROMPT = `
 You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchange Program. Your task is to analyze uploaded student application forms (PDF) and produce a structured, detailed review report. 
 (Sections A-H, Overall Assessment, Red Flags included in logic)
 `;
 
-            const aiModal = document.getElementById('ai-modal');
-            const aiStatusBox = document.getElementById('ai-status-box');
-            const aiStatusText = document.getElementById('ai-status-text');
-            const aiProgressBar = document.getElementById('ai-progress-bar');
-            const aiReport = document.getElementById('ai-report');
-            const aiTargetStudent = document.getElementById('ai-target-student');
-            const aiStructuredContent = document.getElementById('ai-structured-content');
-            const aiRedFlagsList = document.getElementById('ai-red-flags-list');
-            const aiOverallSummary = document.getElementById('ai-overall-summary');
+        const aiModal = document.getElementById('ai-modal');
+        const aiStatusBox = document.getElementById('ai-status-box');
+        const aiStatusText = document.getElementById('ai-status-text');
+        const aiProgressBar = document.getElementById('ai-progress-bar');
+        const aiReport = document.getElementById('ai-report');
+        const aiTargetStudent = document.getElementById('ai-target-student');
+        const aiStructuredContent = document.getElementById('ai-structured-content');
+        const aiRedFlagsList = document.getElementById('ai-red-flags-list');
+        const aiOverallSummary = document.getElementById('ai-overall-summary');
 
-            window.openAIHub = function () {
-                window.openAIAssistant('Batch_Analysis.pdf', 'Múltiplos Candidatos');
-            }
+        window.openAIHub = function () {
+            window.openAIAssistant('Batch_Analysis.pdf', 'Múltiplos Candidatos');
+        }
 
-            window.openAIAssistant = function (filename, studentName) {
-                aiModal.classList.add('active');
-                aiTargetStudent.innerText = studentName;
-                document.getElementById('ai-report-date').innerText = new Date().toLocaleDateString();
+        window.openAIAssistant = function (filename, studentName) {
+            aiModal.classList.add('active');
+            aiTargetStudent.innerText = studentName;
+            document.getElementById('ai-report-date').innerText = new Date().toLocaleDateString();
 
-                // Reset state
-                aiReport.style.display = 'none';
-                aiStatusBox.style.display = 'block';
-                aiProgressBar.style.width = '0%';
-                aiStructuredContent.innerHTML = '';
-                aiRedFlagsList.innerHTML = '';
+            // Reset state
+            aiReport.style.display = 'none';
+            aiStatusBox.style.display = 'block';
+            aiProgressBar.style.width = '0%';
+            aiStructuredContent.innerHTML = '';
+            aiRedFlagsList.innerHTML = '';
 
-                // Detailed Simulation Sequence based on prompt sections
-                const sequence = [
-                    { text: 'A: Validando Identidade e Dados dos Pais...', progress: 15, time: 800 },
-                    { text: 'B: Analisando Cartas (Motivação e Pais)...', progress: 30, time: 1200 },
-                    { text: 'C: Verificando Histórico Médico e Vacinação...', progress: 45, time: 1000 },
-                    { text: 'D: Auditando Exame Odontológico...', progress: 55, time: 700 },
-                    { text: 'E/G: Validando Assinaturas e Endossos...', progress: 70, time: 900 },
-                    { text: 'H: Avaliando Referência Escolar e Notas...', progress: 85, time: 1100 },
-                    { text: 'Finalizando Relatório de Auditoria RYE...', progress: 100, time: 800 }
-                ];
+            // Detailed Simulation Sequence based on prompt sections
+            const sequence = [
+                { text: 'A: Validando Identidade e Dados dos Pais...', progress: 15, time: 800 },
+                { text: 'B: Analisando Cartas (Motivação e Pais)...', progress: 30, time: 1200 },
+                { text: 'C: Verificando Histórico Médico e Vacinação...', progress: 45, time: 1000 },
+                { text: 'D: Auditando Exame Odontológico...', progress: 55, time: 700 },
+                { text: 'E/G: Validando Assinaturas e Endossos...', progress: 70, time: 900 },
+                { text: 'H: Avaliando Referência Escolar e Notas...', progress: 85, time: 1100 },
+                { text: 'Finalizando Relatório de Auditoria RYE...', progress: 100, time: 800 }
+            ];
 
-                let timeAccumulator = 0;
-                aiStatusText.innerHTML = `<i class="fas fa-cog ai-spinner"></i> Iniciando Auditoria RYE para <span style="font-weight:700;">${studentName}</span>...`;
+            let timeAccumulator = 0;
+            aiStatusText.innerHTML = `<i class="fas fa-cog ai-spinner"></i> Iniciando Auditoria RYE para <span style="font-weight:700;">${studentName}</span>...`;
 
-                sequence.forEach((step, index) => {
-                    timeAccumulator += step.time;
-                    setTimeout(() => {
-                        aiProgressBar.style.width = `${step.progress}%`;
-                        aiStatusText.innerHTML = `<i class="fas fa-cog ai-spinner"></i> ${step.text}`;
+            sequence.forEach((step, index) => {
+                timeAccumulator += step.time;
+                setTimeout(() => {
+                    aiProgressBar.style.width = `${step.progress}%`;
+                    aiStatusText.innerHTML = `<i class="fas fa-cog ai-spinner"></i> ${step.text}`;
 
-                        if (index === sequence.length - 1) {
-                            setTimeout(() => window.showAIReport(studentName), 600);
-                        }
-                    }, timeAccumulator - step.time);
-                });
-            }
-
-            window.showAIReport = function (studentName) {
-                aiStatusBox.style.display = 'none';
-                aiReport.style.display = 'block';
-
-                // Map results based on the Sections A-H logic
-                const reportSections = [
-                    {
-                        id: 'personal', title: 'SECTION A – PERSONAL INFORMATION', data: [
-                            { key: 'Full Name', val: studentName + ' Silva' },
-                            { key: 'Nationality', val: 'Brazilian' },
-                            { key: 'Parent Rotarian', val: 'Yes (RC Belo Horizonte)' },
-                            { key: 'Emergency Contact', val: 'Pai (First)' }
-                        ]
-                    },
-                    {
-                        id: 'letters', title: 'SECTION B – LETTERS AND PHOTOS', data: [
-                            { key: 'Student Letter', val: '✅ Present (12 Topics covered)' },
-                            { key: 'Parent Letter', val: '✅ Present (7 Topics covered)' },
-                            { key: 'Photos', val: '✅ 4 Photos with captions' }
-                        ]
-                    },
-                    {
-                        id: 'medical', title: 'SECTION C – MEDICAL HISTORY', data: [
-                            { key: 'Physician', val: 'Dr. Roberto Santos' },
-                            { key: 'Conditions', val: 'None reported' },
-                            { key: 'Immunizations', val: '✅ Complete' }
-                        ]
-                    },
-                    {
-                        id: 'school', title: 'SECTION H – SCHOOL REFERENCE', data: [
-                            { key: 'Intellectual Ability', val: 'Excellent' },
-                            { key: 'Adaptability', val: 'Excellent' },
-                            { key: 'Recommendation', val: 'Strongly Recommend' }
-                        ]
+                    if (index === sequence.length - 1) {
+                        setTimeout(() => window.showAIReport(studentName), 600);
                     }
-                ];
+                }, timeAccumulator - step.time);
+            });
+        }
 
-                reportSections.forEach(section => {
-                    let tableRows = '';
-                    section.data.forEach(item => {
-                        tableRows += `<tr><th>${item.key}</th><td>${item.val}</td></tr>`;
-                    });
+        window.showAIReport = function (studentName) {
+            aiStatusBox.style.display = 'none';
+            aiReport.style.display = 'block';
 
-                    aiStructuredContent.innerHTML += `
+            // Map results based on the Sections A-H logic
+            const reportSections = [
+                {
+                    id: 'personal', title: 'SECTION A – PERSONAL INFORMATION', data: [
+                        { key: 'Full Name', val: studentName + ' Silva' },
+                        { key: 'Nationality', val: 'Brazilian' },
+                        { key: 'Parent Rotarian', val: 'Yes (RC Belo Horizonte)' },
+                        { key: 'Emergency Contact', val: 'Pai (First)' }
+                    ]
+                },
+                {
+                    id: 'letters', title: 'SECTION B – LETTERS AND PHOTOS', data: [
+                        { key: 'Student Letter', val: '✅ Present (12 Topics covered)' },
+                        { key: 'Parent Letter', val: '✅ Present (7 Topics covered)' },
+                        { key: 'Photos', val: '✅ 4 Photos with captions' }
+                    ]
+                },
+                {
+                    id: 'medical', title: 'SECTION C – MEDICAL HISTORY', data: [
+                        { key: 'Physician', val: 'Dr. Roberto Santos' },
+                        { key: 'Conditions', val: 'None reported' },
+                        { key: 'Immunizations', val: '✅ Complete' }
+                    ]
+                },
+                {
+                    id: 'school', title: 'SECTION H – SCHOOL REFERENCE', data: [
+                        { key: 'Intellectual Ability', val: 'Excellent' },
+                        { key: 'Adaptability', val: 'Excellent' },
+                        { key: 'Recommendation', val: 'Strongly Recommend' }
+                    ]
+                }
+            ];
+
+            reportSections.forEach(section => {
+                let tableRows = '';
+                section.data.forEach(item => {
+                    tableRows += `<tr><th>${item.key}</th><td>${item.val}</td></tr>`;
+                });
+
+                aiStructuredContent.innerHTML += `
                         <div class="ai-report-card">
                             <h4>${section.title}</h4>
                             <table class="ai-data-table">${tableRows}</table>
                         </div>
                     `;
-                });
+            });
 
-                // Red Flags Simulation
-                const redFlags = [
-                    { status: 'check', text: 'Todos os endossos do Clube e Distrito estão assinados.' },
-                    { status: 'warn', text: 'Section F (Host) deixada em branco (Normal para submissão inicial).' },
-                    { status: 'check', text: 'Cópia do Passaporte válida por todo o período de intercâmbio.' }
-                ];
+            // Red Flags Simulation
+            const redFlags = [
+                { status: 'check', text: 'Todos os endossos do Clube e Distrito estão assinados.' },
+                { status: 'warn', text: 'Section F (Host) deixada em branco (Normal para submissão inicial).' },
+                { status: 'check', text: 'Cópia do Passaporte válida por todo o período de intercâmbio.' }
+            ];
 
-                redFlags.forEach(flag => {
-                    const icon = flag.status === 'check' ? '<i class="fas fa-check ai-check"></i>' : '<i class="fas fa-exclamation-triangle ai-warn"></i>';
-                    aiRedFlagsList.innerHTML += `<li>${icon} <span>${flag.text}</span></li>`;
-                });
+            redFlags.forEach(flag => {
+                const icon = flag.status === 'check' ? '<i class="fas fa-check ai-check"></i>' : '<i class="fas fa-exclamation-triangle ai-warn"></i>';
+                aiRedFlagsList.innerHTML += `<li>${icon} <span>${flag.text}</span></li>`;
+            });
 
-                aiOverallSummary.innerText = `Candidato ${studentName} apresenta um perfil excepcional com forte recomendação escolar. Toda a documentação obrigatória (Seções A-E e G) está completa e assinada. O plano médico não apresenta restrições. Pronto para revisão final pelo Comitê do Distrito.`;
-            }
+            aiOverallSummary.innerText = `Candidato ${studentName} apresenta um perfil excepcional com forte recomendação escolar. Toda a documentação obrigatória (Seções A-E e G) está completa e assinada. O plano médico não apresenta restrições. Pronto para revisão final pelo Comitê do Distrito.`;
+        }
 
-            window.closeAIModal = function () {
-                aiModal.classList.remove('active');
-            }
+        window.closeAIModal = function () {
+            aiModal.classList.remove('active');
+        }
 
-            window.exportAIReport = function () {
-                const btn = document.querySelector('.ai-modal .modal-footer .btn');
-                btn.innerHTML = '<i class="fas fa-check"></i> Relatório Exportado';
-                btn.style.background = '#2ecc71';
-                setTimeout(() => {
-                    btn.innerHTML = '<i class="fas fa-file-export"></i> Exportar Auditoria';
-                    btn.style.background = '#8e44ad';
-                }, 2000);
-            }
+        window.exportAIReport = function () {
+            const btn = document.querySelector('.ai-modal .modal-footer .btn');
+            btn.innerHTML = '<i class="fas fa-check"></i> Relatório Exportado';
+            btn.style.background = '#2ecc71';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-file-export"></i> Exportar Auditoria';
+                btn.style.background = '#8e44ad';
+            }, 2000);
+        }
 
-            // Firebase Authentication Logic
-            const loginView = document.getElementById('login-view');
-            const loginError = document.getElementById('login-error');
+        // Firebase Authentication Logic
+        const loginView = document.getElementById('login-view');
+        const loginError = document.getElementById('login-error');
 
-            let dashboardUnsubscribe = null;
+        let dashboardUnsubscribe = null;
 
-            async function loadDashboardData() {
-                try {
-                    const filesRef = collection(db, "applications");
-                    const q = query(filesRef, orderBy("timestamp", "desc"), limit(50));
+        async function loadDashboardData() {
+            try {
+                const filesRef = collection(db, "applications");
+                const q = query(filesRef, orderBy("timestamp", "desc"), limit(50));
 
-                    if (dashboardUnsubscribe) dashboardUnsubscribe();
+                if (dashboardUnsubscribe) dashboardUnsubscribe();
 
-                    dashboardUnsubscribe = onSnapshot(q, (querySnapshot) => {
-                        let total = 0;
-                        let inboundCount = 0;
-                        let outboundCount = 0;
+                dashboardUnsubscribe = onSnapshot(q, (querySnapshot) => {
+                    let total = 0;
+                    let inboundCount = 0;
+                    let outboundCount = 0;
 
-                        const inboundList = document.getElementById('inbound-file-list');
-                        const outboundList = document.getElementById('outbound-file-list');
+                    const inboundList = document.getElementById('inbound-file-list');
+                    const outboundList = document.getElementById('outbound-file-list');
 
-                        inboundList.innerHTML = `<div class="file-header"><div>Name</div><div>Size</div><div>Added By</div><div style="text-align: right;">Date</div></div>`;
-                        outboundList.innerHTML = `<div class="file-header"><div>Name</div><div>Size</div><div>Added By</div><div style="text-align: right;">Date</div></div>`;
+                    inboundList.innerHTML = `<div class="file-header"><div>Name</div><div>Size</div><div>Added By</div><div style="text-align: right;">Date</div></div>`;
+                    outboundList.innerHTML = `<div class="file-header"><div>Name</div><div>Size</div><div>Added By</div><div style="text-align: right;">Date</div></div>`;
 
-                        querySnapshot.forEach((doc) => {
-                            total++;
-                            const data = doc.data();
+                    querySnapshot.forEach((doc) => {
+                        total++;
+                        const data = doc.data();
 
-                            let dateStr = "Just now";
-                            if (data.timestamp) {
-                                dateStr = data.timestamp.toDate().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-                            }
+                        let dateStr = "Just now";
+                        if (data.timestamp) {
+                            dateStr = data.timestamp.toDate().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                        }
 
-                            const itemHTML = `
+                        const itemHTML = `
                             <div class="file-item">
                                 <div class="file-name">
                                     <div class="file-icon pdf"><i class="fas fa-file-pdf"></i></div>
@@ -2040,7 +1950,6 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
                                 <div class="file-date" style="text-align: right; display:flex; justify-content:flex-end; align-items:center; gap: 15px;">
                                     <span>${dateStr}</span>
                                     <div class="file-actions">
-                                        <button class="action-btn" title="AI Document Analysis" onclick="openAIAssistant('${data.name}', '${data.name.split('_')[1] || "Student"}')"><i class="fas fa-brain" style="color: #8e44ad;"></i></button>
                                         <button class="action-btn"><i class="fas fa-download"></i></button>
                                         <button class="action-btn" onclick="deleteDocument('${doc.id}')"><i class="fas fa-trash"></i></button>
                                     </div>
@@ -2048,96 +1957,96 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
                             </div>
                         `;
 
-                            if (data.type === 'inbound') {
-                                inboundCount++;
-                                inboundList.innerHTML += itemHTML;
-                            } else if (data.type === 'outbound') {
-                                outboundCount++;
-                                outboundList.innerHTML += itemHTML;
-                            }
-                        });
-
-                        document.getElementById('stat-total-apps').innerText = total;
-                        document.getElementById('stat-inbound').innerText = inboundCount;
-                        document.getElementById('stat-outbound').innerText = outboundCount;
+                        if (data.type === 'inbound') {
+                            inboundCount++;
+                            inboundList.innerHTML += itemHTML;
+                        } else if (data.type === 'outbound') {
+                            outboundCount++;
+                            outboundList.innerHTML += itemHTML;
+                        }
                     });
 
-                } catch (error) {
-                    console.error("Error loading dashboard data:", error);
-                }
-            }
-
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    // User is signed in.
-                    loginView.style.display = 'none';
-
-                    // Update User Profile UI
-                    document.querySelector('.user-info h4').innerText = user.displayName || user.email.split('@')[0];
-                    document.querySelector('.user-info p').innerText = user.email;
-                    document.querySelector('.user-profile .avatar').innerText = (user.displayName || user.email).substring(0, 2).toUpperCase();
-
-                    loadDashboardData();
-                } else {
-                    // No user is signed in.
-                    loginView.style.display = 'flex';
-                    // Reset errors on show
-                    loginError.style.display = 'none';
-                    document.getElementById('login-email').value = '';
-                    document.getElementById('login-pwd').value = '';
-                }
-            });
-
-
-
-            function showLoginError(msg) {
-                loginError.innerText = msg;
-                loginError.style.display = 'block';
-            }
-
-            // ============================================================
-            // Bind auth buttons via addEventListener (module-safe approach)
-            // ============================================================
-            document.getElementById('btn-signin').addEventListener('click', () => {
-                console.log("Sign In clicked");
-                const email = document.getElementById('login-email').value.trim();
-                const password = document.getElementById('login-pwd').value;
-                if (!email || !password) { showLoginError('Please enter both email and password.'); return; }
-                signInWithEmailAndPassword(auth, email, password)
-                    .catch(err => showLoginError(err.message));
-            });
-
-            document.getElementById('btn-google-signin').addEventListener('click', () => {
-                console.log("Google Sign In clicked");
-                signInWithPopup(auth, googleProvider)
-                    .catch(err => showLoginError(err.message));
-            });
-
-            document.getElementById('link-register').addEventListener('click', (e) => {
-                e.preventDefault();
-                console.log("Register clicked");
-                const email = document.getElementById('login-email').value.trim();
-                const password = document.getElementById('login-pwd').value;
-                if (!email || !password) { showLoginError('Please enter email and a password (min 6 chars) to register.'); return; }
-                createUserWithEmailAndPassword(auth, email, password)
-                    .catch(err => showLoginError(err.message));
-            });
-
-            // Logout - connect to sidebar last nav item
-            const logoutNav = document.querySelector('.nav-item:last-child');
-            if (logoutNav) {
-                logoutNav.addEventListener('click', () => {
-                    signOut(auth).catch(err => console.error("Logout error:", err));
+                    document.getElementById('stat-total-apps').innerText = total;
+                    document.getElementById('stat-inbound').innerText = inboundCount;
+                    document.getElementById('stat-outbound').innerText = outboundCount;
                 });
-            }
 
-            // These need to be on window since they're called from dynamically generated HTML
-            window.deleteDocument = async (docId) => {
-                if (confirm("Are you sure you want to delete this application?")) {
-                    await deleteDoc(doc(db, "applications", docId));
-                }
-            };
-        </script>
+            } catch (error) {
+                console.error("Error loading dashboard data:", error);
+            }
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in.
+                loginView.style.display = 'none';
+
+                // Update User Profile UI
+                document.querySelector('.user-info h4').innerText = user.displayName || user.email.split('@')[0];
+                document.querySelector('.user-info p').innerText = user.email;
+                document.querySelector('.user-profile .avatar').innerText = (user.displayName || user.email).substring(0, 2).toUpperCase();
+
+                loadDashboardData();
+            } else {
+                // No user is signed in.
+                loginView.style.display = 'flex';
+                // Reset errors on show
+                loginError.style.display = 'none';
+                document.getElementById('login-email').value = '';
+                document.getElementById('login-pwd').value = '';
+            }
+        });
+
+
+
+        function showLoginError(msg) {
+            loginError.innerText = msg;
+            loginError.style.display = 'block';
+        }
+
+        // ============================================================
+        // Bind auth buttons via addEventListener (module-safe approach)
+        // ============================================================
+        document.getElementById('btn-signin').addEventListener('click', () => {
+            console.log("Sign In clicked");
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-pwd').value;
+            if (!email || !password) { showLoginError('Please enter both email and password.'); return; }
+            signInWithEmailAndPassword(auth, email, password)
+                .catch(err => showLoginError(err.message));
+        });
+
+        document.getElementById('btn-google-signin').addEventListener('click', () => {
+            console.log("Google Sign In clicked");
+            signInWithPopup(auth, googleProvider)
+                .catch(err => showLoginError(err.message));
+        });
+
+        document.getElementById('link-register').addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log("Register clicked");
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-pwd').value;
+            if (!email || !password) { showLoginError('Please enter email and a password (min 6 chars) to register.'); return; }
+            createUserWithEmailAndPassword(auth, email, password)
+                .catch(err => showLoginError(err.message));
+        });
+
+        // Logout - connect to sidebar last nav item
+        const logoutNav = document.querySelector('.nav-item:last-child');
+        if (logoutNav) {
+            logoutNav.addEventListener('click', () => {
+                signOut(auth).catch(err => console.error("Logout error:", err));
+            });
+        }
+
+        // These need to be on window since they're called from dynamically generated HTML
+        window.deleteDocument = async (docId) => {
+            if (confirm("Are you sure you want to delete this application?")) {
+                await deleteDoc(doc(db, "applications", docId));
+            }
+        };
+    </script>
 </body>
 
 </html>

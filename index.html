@@ -1,0 +1,2142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YEP Application Data - Rotary Distrito</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Firebase SDKs will be loaded at the bottom -->
+    <style>
+        :root {
+            --rotary-royal-blue: #17458F;
+            --rotary-azure: #0067C8;
+            --rotary-sky-blue: #00A2E0;
+            --rotary-gold: #F7A81B;
+
+            --bg-color: #f0f4f8;
+            --text-main: #333333;
+            --text-light: #666666;
+            --white: #ffffff;
+            --sidebar-width: 280px;
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--rotary-royal-blue) 0%, var(--rotary-azure) 100%);
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .logo-container {
+            padding: 30px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background-color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--rotary-gold);
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            border: 2px dashed var(--rotary-royal-blue);
+            border-radius: 50%;
+            animation: spin 10s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .logo-text h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+
+        .logo-text p {
+            font-size: 0.8rem;
+            color: var(--rotary-sky-blue);
+            margin-top: 4px;
+        }
+
+        .nav-menu {
+            margin-top: 20px;
+            flex-grow: 1;
+            padding: 0 15px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            transition: var(--transition);
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--rotary-gold);
+            border-left: 4px solid var(--rotary-gold);
+        }
+
+        .nav-item i {
+            margin-right: 15px;
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .user-profile {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--rotary-sky-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--white);
+            border: 2px solid var(--rotary-gold);
+        }
+
+        .user-info h4 {
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+        }
+
+        .user-info p {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Header */
+        .header {
+            height: 80px;
+            background-color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 5;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--rotary-royal-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-bar {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border-radius: 20px;
+            border: 1px solid #e0e0e0;
+            background-color: #f8f9fa;
+            outline: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .search-bar input:focus {
+            border-color: var(--rotary-sky-blue);
+            background-color: var(--white);
+            box-shadow: 0 0 0 3px rgba(0, 162, 224, 0.1);
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .notification-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .notification-btn:hover {
+            color: var(--rotary-royal-blue);
+        }
+
+        .notification-btn::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--rotary-gold);
+            border-radius: 50%;
+            border: 2px solid var(--white);
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 30px 40px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        /* Dashboard specific */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .stat-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 4px;
+        }
+
+        .stat-card:nth-child(1)::before {
+            background-color: var(--rotary-royal-blue);
+        }
+
+        .stat-card:nth-child(2)::before {
+            background-color: var(--rotary-sky-blue);
+        }
+
+        .stat-card:nth-child(3)::before {
+            background-color: var(--rotary-gold);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-info h3 {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .stat-info .number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-card:nth-child(1) .stat-icon {
+            background-color: rgba(23, 69, 143, 0.1);
+            color: var(--rotary-royal-blue);
+        }
+
+        .stat-card:nth-child(2) .stat-icon {
+            background-color: rgba(0, 162, 224, 0.1);
+            color: var(--rotary-sky-blue);
+        }
+
+        .stat-card:nth-child(3) .stat-icon {
+            background-color: rgba(247, 168, 27, 0.1);
+            color: var(--rotary-gold);
+        }
+
+        /* Shared Team Banner */
+        .team-banner {
+            background: linear-gradient(135deg, rgba(23, 69, 143, 0.05), rgba(0, 162, 224, 0.05));
+            border: 1px solid rgba(0, 162, 224, 0.2);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .team-banner-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .team-icon {
+            font-size: 1.8rem;
+            color: var(--rotary-azure);
+        }
+
+        .team-text h3 {
+            color: var(--rotary-royal-blue);
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .team-text p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .team-avatars {
+            display: flex;
+        }
+
+        .team-avatars .avatar {
+            width: 35px;
+            height: 35px;
+            border: 2px solid var(--white);
+            margin-left: -10px;
+            font-size: 0.7rem;
+        }
+
+        .team-avatars .avatar:first-child {
+            margin-left: 0;
+        }
+
+        .team-avatars .avatar:nth-child(1) {
+            background-color: #3498db;
+        }
+
+        .team-avatars .avatar:nth-child(2) {
+            background-color: #e74c3c;
+        }
+
+        .team-avatars .avatar:nth-child(3) {
+            background-color: #2ecc71;
+        }
+
+        .team-avatars .avatar:nth-child(4) {
+            background-color: #9b59b6;
+        }
+
+        /* Folders Layout */
+        .folders-section {
+            margin-top: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .section-header h2 {
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .btn {
+            background-color: var(--rotary-azure);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background-color: var(--rotary-royal-blue);
+            box-shadow: 0 4px 10px rgba(23, 69, 143, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-gold {
+            background-color: var(--rotary-gold);
+            color: var(--text-main);
+        }
+
+        .btn-gold:hover {
+            background-color: #e69a10;
+            box-shadow: 0 4px 10px rgba(247, 168, 27, 0.3);
+        }
+
+        /* File list */
+        .file-list {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+            display: grid;
+        }
+
+        .file-header {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1.5fr 1fr;
+            padding: 15px 25px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eaeaea;
+            font-weight: 600;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .file-item {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1.5fr 1fr;
+            padding: 16px 25px;
+            border-bottom: 1px solid #f0f0f0;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-item:hover {
+            background-color: #fcfcfc;
+            transform: scale(1.002);
+            box-shadow: inset 4px 0 0 var(--rotary-sky-blue);
+        }
+
+        .file-name {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 500;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        .file-name:hover {
+            color: var(--rotary-azure);
+        }
+
+        .file-icon {
+            font-size: 1.4rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .file-icon.pdf {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+        }
+
+        .file-icon.img {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: #2ecc71;
+        }
+
+        .file-icon.doc {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+        }
+
+        .file-icon.folder {
+            background-color: rgba(247, 168, 27, 0.1);
+            color: var(--rotary-gold);
+        }
+
+        .file-size,
+        .file-date {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .file-owner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .file-owner .avatar {
+            width: 24px;
+            height: 24px;
+            font-size: 0.6rem;
+            border: none;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .file-item:hover .file-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            background-color: var(--bg-color);
+            color: var(--rotary-royal-blue);
+        }
+
+        /* Views visibility */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Folder Grid View (used in Dashboard) */
+        .folder-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .folder-card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .folder-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border-color: var(--rotary-sky-blue);
+        }
+
+        .folder-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--rotary-royal-blue), var(--rotary-azure));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .folder-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .folder-card-icon {
+            font-size: 3rem;
+            color: var(--rotary-gold);
+            margin-bottom: 15px;
+        }
+
+        .folder-card-azure .folder-card-icon {
+            color: var(--rotary-azure);
+        }
+
+        .folder-card h3 {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+
+        .folder-card p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+
+        .folder-card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eaeaea;
+            padding-top: 15px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            width: 500px;
+            max-width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px) scale(0.95);
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: var(--rotary-royal-blue);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 30px 25px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--rotary-sky-blue);
+            border-radius: var(--border-radius);
+            padding: 40px 20px;
+            text-align: center;
+            background-color: rgba(0, 162, 224, 0.02);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .upload-area:hover {
+            background-color: rgba(0, 162, 224, 0.05);
+            border-color: var(--rotary-royal-blue);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--rotary-azure);
+            margin-bottom: 15px;
+        }
+
+        .modal-footer {
+            padding: 15px 25px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #eaeaea;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* AI Assistant Styles */
+        .ai-btn {
+            background: linear-gradient(135deg, #8e44ad, var(--rotary-royal-blue));
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(142, 68, 173, 0.3);
+        }
+
+        .ai-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(142, 68, 173, 0.5);
+        }
+
+        .ai-modal .modal-content {
+            width: 700px;
+            max-width: 95%;
+        }
+
+        .ai-modal-header {
+            background: linear-gradient(135deg, #1f1c2c, #928DAB);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-modal-header h3 {
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-modal-header .close-modal {
+            color: white;
+        }
+
+        .ai-status-container {
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            border-left: 4px solid #8e44ad;
+        }
+
+        .ai-status-text {
+            font-weight: 500;
+            color: #8e44ad;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-spinner {
+            animation: spin 1.5s linear infinite;
+        }
+
+        .ai-report-section {
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease-out;
+            display: none;
+        }
+
+        .ai-report-card {
+            background: white;
+            border: 1px solid #eaeaea;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+        }
+
+        .ai-report-card h4 {
+            color: var(--rotary-royal-blue);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 8px;
+        }
+
+        .ai-checklist {
+            list-style: none;
+        }
+
+        .ai-checklist li {
+            padding: 8px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            border-bottom: 1px dashed #f0f0f0;
+        }
+
+        .ai-checklist li:last-child {
+            border-bottom: none;
+        }
+
+        .ai-check {
+            color: #2ecc71;
+        }
+
+        .ai-cross {
+            color: #e74c3c;
+        }
+
+        .ai-warn {
+            color: var(--rotary-gold);
+        }
+
+        .ai-report-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .ai-section-title {
+            grid-column: 1 / -1;
+            background: var(--rotary-royal-blue);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .ai-data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        .ai-data-table th,
+        .ai-data-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .ai-data-table th {
+            color: var(--text-light);
+            font-weight: 500;
+            width: 40%;
+        }
+
+        .ai-data-table td {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .ai-status-tag {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-complete {
+            background: #e8f8f0;
+            color: #2ecc71;
+        }
+
+        .status-missing {
+            background: #fdf2f2;
+            color: #e74c3c;
+        }
+
+        .status-followup {
+            background: #fef9e7;
+            color: #f1c40f;
+        }
+
+        .ai-cross {
+            color: #e74c3c;
+        }
+
+        .ai-warn {
+            color: var(--rotary-gold);
+        }
+
+        .ai-profile-tag {
+            display: inline-block;
+            background-color: rgba(23, 69, 143, 0.1);
+            color: var(--rotary-royal-blue);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 5px 5px 5px 0;
+        }
+
+        .ai-recommendation {
+            background: linear-gradient(to right, rgba(0, 162, 224, 0.05), transparent);
+            padding: 15px;
+            border-left: 3px solid var(--rotary-sky-blue);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-main);
+            margin-top: 10px;
+        }
+
+        .btn-outline {
+            background: none;
+            border: 1px solid #ccc;
+            color: var(--text-main);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-outline:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+
+            .file-header,
+            .file-item {
+                grid-template-columns: 3fr 1fr 1fr;
+            }
+
+            .file-owner {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: absolute;
+                transform: translateX(-100%);
+                height: 100%;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .header {
+                padding: 0 20px;
+            }
+
+            .search-bar {
+                width: 200px;
+            }
+
+            .file-header,
+            .file-item {
+                grid-template-columns: 3fr 1fr auto;
+            }
+
+            .file-size {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Login View (Overlay) -->
+    <div id="login-view"
+        style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--rotary-royal-blue); display: flex; align-items: center; justify-content: center; z-index: 9999; flex-direction: column;">
+        <div
+            style="background: white; padding: 40px; border-radius: 12px; width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center;">
+            <div style="font-size: 3rem; color: var(--rotary-gold); margin-bottom: 20px;">
+                <i class="fas fa-cog fa-spin" style="animation-duration: 10s;"></i>
+            </div>
+            <h2 style="color: var(--rotary-royal-blue); margin-bottom: 5px;">YEP Application</h2>
+            <p style="color: var(--text-light); margin-bottom: 30px; font-size: 0.9rem;">Painel do Rotary Distrito
+            </p>
+
+            <div style="margin-bottom: 20px; text-align: left;">
+                <label
+                    style="display: block; font-size: 0.85rem; color: var(--text-light); margin-bottom: 8px;">Endereço
+                    de E-mail</label>
+                <input type="email" id="login-email" placeholder="oficial@rotary.org"
+                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; outline: none;">
+            </div>
+
+            <div style="margin-bottom: 20px; text-align: left;">
+                <label
+                    style="display: block; font-size: 0.85rem; color: var(--text-light); margin-bottom: 8px;">Senha</label>
+                <input type="password" id="login-pwd" placeholder="••••••••"
+                    style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; outline: none;">
+            </div>
+
+            <div id="login-error" style="color: #e74c3c; font-size: 0.85rem; margin-bottom: 15px; display: none;">Error
+                mapping...</div>
+
+            <button id="btn-signin"
+                style="width: 100%; padding: 12px; background: var(--rotary-azure); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-bottom: 15px; font-size: 1rem;">Entrar</button>
+
+            <div style="display: flex; align-items: center; margin: 20px 0;">
+                <div style="flex-grow: 1; height: 1px; background: #eee;"></div>
+                <span style="padding: 0 10px; color: var(--text-light); font-size: 0.85rem;">OU</span>
+                <div style="flex-grow: 1; height: 1px; background: #eee;"></div>
+            </div>
+
+            <button id="btn-google-signin"
+                style="width: 100%; padding: 12px; background: white; color: #555; border: 1px solid #ddd; border-radius: 8px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.95rem;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" width="18"
+                    height="18" alt="Google">
+                Entrar com Google
+            </button>
+
+            <p style="margin-top: 25px; font-size: 0.85rem; color: var(--text-light);">Novo oficial? <a href="#"
+                    id="link-register"
+                    style="color: var(--rotary-azure); text-decoration: none; font-weight: 600;">Cadastre-se aqui</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <i class="fas fa-cog"></i>
+            </div>
+            <div class="logo-text">
+                <h1>YEP Application</h1>
+                <p>Rotary Distrito</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a class="nav-item active" data-view="dashboard">
+                <i class="fas fa-chart-pie"></i>
+                Painel
+            </a>
+            <a class="nav-item" data-view="inbound">
+                <i class="fas fa-plane-arrival"></i>
+                Inbound Application
+            </a>
+            <a class="nav-item" data-view="outbound">
+                <i class="fas fa-plane-departure"></i>
+                Outbound Application
+            </a>
+            <div style="margin: 30px 15px 10px 15px; height: 1px; background: rgba(255,255,255,0.1);"></div>
+            <a class="nav-item" onclick="openAIHub()"
+                style="background: rgba(142, 68, 173, 0.2); border-left: 3px solid #8e44ad;">
+                <i class="fas fa-brain" style="color: #e056fd;"></i>
+                <span style="color: white; font-weight: 600;">Assistente de Análise IA</span>
+            </a>
+            <a class="nav-item" style="margin-top: 20px; color: rgba(255,255,255,0.6);" data-view="settings">
+                <i class="fas fa-cog"></i>
+                Configurações da Equipe
+            </a>
+            <a class="nav-item" style="color: rgba(255,255,255,0.6);">
+                <i class="fas fa-sign-out-alt"></i>
+                Sair
+            </a>
+        </nav>
+
+        <div class="user-profile">
+            <div class="avatar">JP</div>
+            <div class="user-info">
+                <h4>João Pedro</h4>
+                <p>Oficial YEP</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <h2 class="page-title" id="page-title">
+                <i class="fas fa-chart-pie"></i> Visão Geral do Painel
+            </h2>
+
+            <div class="header-actions">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Buscar candidaturas, arquivos...">
+                </div>
+                <button class="notification-btn">
+                    <i class="far fa-bell"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content-area">
+
+            <!-- Shared Team Banner -->
+            <div class="team-banner">
+                <div class="team-banner-content">
+                    <i class="fas fa-users team-icon"></i>
+                    <div class="team-text">
+                        <h3>Drive Compartilhado da Equipe</h3>
+                        <p>Este banco de dados é compartilhado com segurança com todos os membros do YEP do Distrito.
+                        </p>
+                    </div>
+                </div>
+                <div class="team-avatars">
+                    <div class="avatar">MC</div>
+                    <div class="avatar">AB</div>
+                    <div class="avatar">RF</div>
+                    <div class="avatar">+4</div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD VIEW -->
+            <div id="view-dashboard" class="view-section active">
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Total de Applications</h3>
+                            <div class="number" id="stat-total-apps">0</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Inbound Applications Processados</h3>
+                            <div class="number" id="stat-inbound">0</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-plane-arrival"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <h3>Outbound Applications Processados</h3>
+                            <div class="number" id="stat-outbound">0</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-plane-departure"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-header" style="margin-top: 40px; border-bottom: none; margin-bottom: 10px;">
+                    <h2>Pastas de Applications</h2>
+                </div>
+
+                <div class="folder-grid">
+                    <div class="folder-card" onclick="switchView('inbound')">
+                        <i class="fas fa-folder folder-card-icon folder-card-azure"></i>
+                        <h3>Inbound Application</h3>
+                        <p>Documentos de inbounds.</p>
+                        <div class="folder-card-meta">
+                            <span>1.2 GB</span>
+                            <span>68 Candidatos</span>
+                        </div>
+                    </div>
+
+                    <div class="folder-card" onclick="switchView('outbound')">
+                        <i class="fas fa-folder folder-card-icon"></i>
+                        <h3>Outbound Application</h3>
+                        <p>Documentos de Outbounds.</p>
+                        <div class="folder-card-meta">
+                            <span>1.5 GB</span>
+                            <span>74 Candidatos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-header" style="margin-top: 40px;">
+                    <h2>Atividade Global Recente</h2>
+                </div>
+
+                <div class="file-list">
+                    <div class="file-header">
+                        <div>Nome</div>
+                        <div>Tamanho</div>
+                        <div>Adicionado Por</div>
+                        <div style="text-align: right;">Data</div>
+                    </div>
+
+                    <div class="file-item">
+                        <div class="file-name">
+                            <div class="file-icon pdf"><i class="fas fa-file-pdf"></i></div>
+                            Main_Application_John_Doe.pdf
+                        </div>
+                        <div class="file-size">4.2 MB</div>
+                        <div class="file-owner">
+                            <div class="avatar" style="background: #3498db;">MC</div>
+                            Maria Costa
+                        </div>
+                        <div class="file-date" style="text-align: right;">Hoje, 10:23</div>
+                    </div>
+                    <div class="file-item">
+                        <div class="file-name">
+                            <div class="file-icon img"><i class="fas fa-file-image"></i></div>
+                            Passport_Photo_Jane_S.jpg
+                        </div>
+                        <div class="file-size">1.8 MB</div>
+                        <div class="file-owner">
+                            <div class="avatar" style="background: #e74c3c;">AB</div>
+                            Ana Borges
+                        </div>
+                        <div class="file-date" style="text-align: right;">Ontem, 14:45</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INBOUND VIEW -->
+            <div id="view-inbound" class="view-section">
+                <div class="section-header">
+                    <h2>Documentos / Inbound Application</h2>
+                    <button class="btn" onclick="openUploadModal('Inbound')">
+                        <i class="fas fa-cloud-upload-alt"></i> Enviar Arquivos
+                    </button>
+                </div>
+
+                <div class="file-list" id="inbound-file-list">
+                    <div class="file-header">
+                        <div>Nome</div>
+                        <div>Tamanho</div>
+                        <div>Adicionado Por</div>
+                        <div style="text-align: right;">Data</div>
+                    </div>
+
+                    <div class="file-item">
+                        <div class="file-name">
+                            <div class="file-icon folder"><i class="fas fa-folder"></i></div>
+                            2024-2025_Cycle
+                        </div>
+                        <div class="file-size">--</div>
+                        <div class="file-owner">
+                            <div class="avatar" style="background: #9b59b6;">JP</div>
+                            João Pedro
+                        </div>
+                        <div class="file-date"
+                            style="text-align: right; display:flex; justify-content:flex-end; align-items:center; gap: 15px;">
+                            <span>Mar 01, 2024</span>
+                            <div class="file-actions">
+                                <button class="action-btn"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="file-item">
+                        <div class="file-name">
+                            <div class="file-icon pdf"><i class="fas fa-file-pdf"></i></div>
+                            Application_Hans_Müller_GE.pdf
+                        </div>
+                        <div class="file-size">5.1 MB</div>
+                        <div class="file-owner">
+                            <div class="avatar" style="background: #3498db;">MC</div>
+                            Maria Costa
+                        </div>
+                        <div class="file-date"
+                            style="text-align: right; display:flex; justify-content:flex-end; align-items:center; gap: 15px;">
+                            <span>Mar 05, 2024</span>
+                            <div class="file-actions">
+                                <button class="action-btn" title="AI Document Analysis"
+                                    onclick="openAIAssistant('Application_Hans_Müller_GE.pdf', 'Hans Müller')"><i
+                                        class="fas fa-brain" style="color: #8e44ad;"></i></button>
+                                <button class="action-btn"><i class="fas fa-download"></i></button>
+                                <button class="action-btn"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="file-item">
+                        <div class="file-name">
+                            <div class="file-icon pdf"><i class="fas fa-file-pdf"></i></div>
+                            Medical_Record_Yuki_JAP.pdf
+                        </div>
+                        <div class="file-size">2.3 MB</div>
+                        <div class="file-owner">
+                            <div class="avatar" style="background: #e74c3c;">AB</div>
+                            Ana Borges
+                        </div>
+                        <div class="file-date"
+                            style="text-align: right; display:flex; justify-content:flex-end; align-items:center; gap: 15px;">
+                            <span>Mar 06, 2024</span>
+                            <div class="file-actions">
+                                <button class="action-btn"><i class="fas fa-download"></i></button>
+                                <button class="action-btn"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OUTBOUND VIEW -->
+            <div id="view-outbound" class="view-section">
+                <div class="section-header">
+                    <h2>Documentos / Outbound Application</h2>
+                    <button class="btn" onclick="openUploadModal('Outbound')">
+                        <i class="fas fa-cloud-upload-alt"></i> Enviar Arquivos
+                    </button>
+                </div>
+
+                <div class="file-list" id="outbound-file-list">
+                    <div class="file-header">
+                        <div>Nome</div>
+                        <div>Tamanho</div>
+                        <div>Adicionado Por</div>
+                        <div style="text-align: right;">Data</div>
+                    </div>
+
+                    <div class="file-item">
+                        <div class="file-name">
+                            <div class="file-icon folder"><i class="fas fa-folder"></i></div>
+                            2024-2025_Cycle
+                        </div>
+                        <div class="file-size">--</div>
+                        <div class="file-owner">
+                            <div class="avatar" style="background: #9b59b6;">JP</div>
+                            João Pedro
+                        </div>
+                        <div class="file-date"
+                            style="text-align: right; display:flex; justify-content:flex-end; align-items:center; gap: 15px;">
+                            <span>Feb 15, 2024</span>
+                            <div class="file-actions">
+                                <button class="action-btn"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="file-item">
+                        <div class="file-name">
+                            <div class="file-icon pdf"><i class="fas fa-file-pdf"></i></div>
+                            Application_Pedro_Silva_BR.pdf
+                        </div>
+                        <div class="file-size">4.8 MB</div>
+                        <div class="file-owner">
+                            <div class="avatar" style="background: #9b59b6;">JP</div>
+                            João Pedro
+                        </div>
+                        <div class="file-date"
+                            style="text-align: right; display:flex; justify-content:flex-end; align-items:center; gap: 15px;">
+                            <span>Mar 07, 2024</span>
+                            <div class="file-actions">
+                                <button class="action-btn" title="AI Document Analysis"
+                                    onclick="openAIAssistant('Application_Pedro_Silva_BR.pdf', 'Pedro Silva')"><i
+                                        class="fas fa-brain" style="color: #8e44ad;"></i></button>
+                                <button class="action-btn"><i class="fas fa-download"></i></button>
+                                <button class="action-btn"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="file-item">
+                        <div class="file-name">
+                            <div class="file-icon doc"><i class="fas fa-file-word"></i></div>
+                            Motivation_Letter_Julia.docx
+                        </div>
+                        <div class="file-size">1.1 MB</div>
+                        <div class="file-owner">
+                            <div class="avatar" style="background: #2ecc71;">RF</div>
+                            Rafael F.
+                        </div>
+                        <div class="file-date"
+                            style="text-align: right; display:flex; justify-content:flex-end; align-items:center; gap: 15px;">
+                            <span>Mar 07, 2024</span>
+                            <div class="file-actions">
+                                <button class="action-btn"><i class="fas fa-download"></i></button>
+                                <button class="action-btn"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings View Placeholder -->
+            <div id="view-settings" class="view-section">
+                <div class="section-header">
+                    <h2>Configurações da Equipe</h2>
+                </div>
+                <div class="team-banner">
+                    <div class="team-banner-content">
+                        <i class="fas fa-cog team-icon"></i>
+                        <div class="team-text">
+                            <h3>Gerenciar Acesso da Equipe YEP</h3>
+                            <p>Configure permissões para os oficiais do Distrito.</p>
+                        </div>
+                    </div>
+                </div>
+                <p style="color: var(--text-light); text-align: center; margin-top: 50px;">O painel de configurações
+                    será implementado aqui na versão completa.</p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- AI Assistant Modal -->
+    <div class="modal-overlay ai-modal" id="ai-modal">
+        <div class="modal-content">
+            <div class="ai-modal-header">
+                <h3><i class="fas fa-brain"></i> YEP Inteligência de Candidaturas</h3>
+                <button class="close-modal" onclick="closeAIModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+
+                <div class="ai-status-container" id="ai-status-box">
+                    <div class="ai-status-text" id="ai-status-text">
+                        <i class="fas fa-cog ai-spinner"></i> Iniciando Análise Profunda de Documentos para <span
+                            id="ai-target-student" style="font-weight:700;">Aluno</span>...
+                    </div>
+                    <div
+                        style="height: 4px; background: #e0e0e0; border-radius: 2px; overflow: hidden; margin-top: 15px;">
+                        <div id="ai-progress-bar"
+                            style="height: 100%; width: 0%; box-shadow: 0 0 10px #8e44ad; background: linear-gradient(90deg, #8e44ad, #e056fd); transition: width 0.3s ease;">
+                        </div>
+                    </div>
+                    <div class="ai-report-section" id="ai-report">
+
+                        <div class="ai-report-card">
+                            <h4><i class="fas fa-clipboard-check"></i> Preenchimento e Validação do Formulário</h4>
+                            <ul class="ai-checklist" id="ai-validation-list">
+                                <!-- Populated by JS -->
+                            </ul>
+                        </div>
+
+                        <div class="ai-report-card">
+                            <h4><i class="fas fa-user-astronaut"></i> Perfil Comportamental e Psicológico</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 15px;">Baseado em
+                                análise semântica da Carta de Motivação do Aluno e das Cartas dos Pais.</p>
+
+                            <div style="margin-bottom: 15px;">
+                                <span class="ai-profile-tag"><i class="fas fa-hiking"></i> Ativo ao Ar Livre</span>
+                                <span class="ai-profile-tag"><i class="fas fa-book"></i> Focado nos Estudos</span>
+                                <span class="ai-profile-tag"><i class="fas fa-dog"></i> Amigo dos Animais</span>
+                                <span class="ai-profile-tag"><i class="fas fa-hands-helping"></i> Empático</span>
+                            </div>
+
+                            <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
+                                O candidato demonstra alta capacidade de adaptação e forte desejo de imersão cultural. A
+                                análise léxica da carta dos pais indica uma criação estruturada, mas com apoio à
+                                independência. A carta do aluno demonstra grande curiosidade, pouca ansiedade em relação
+                                a sair de casa e preferência por ambientes ativos e dinâmicos.
+                            </p>
+                        </div>
+
+                        <div class="ai-report-card" style="border-left: 4px solid var(--rotary-sky-blue);">
+                            <h4><i class="fas fa-home"></i> Recomendação de Família Anfitriã e Ambiente</h4>
+                            <div class="ai-recommendation">
+                                <strong>Cenário Ideal de Colocação:</strong>
+                                <br><br>
+                                Este aluno tem grande probabilidade de se destacar em uma <strong>cidade ativa de porte
+                                    médio ou em ambiente suburbano</strong>.
+                                <br><br>
+                                Dado seu forte foco acadêmico e interesse em atividades ao ar livre, uma família
+                                anfitriã com irmãos adolescentes ou que frequentemente realiza passeios nos finais de
+                                semana (trilhas, esportes, eventos comunitários) seria ideal.
+                                <br><br>
+                                <em>Evitar:</em> Ambientes rurais muito isolados ou famílias excessivamente sedentárias,
+                                pois o alto nível de energia do candidato pode gerar leve atrito se não canalizado em
+                                atividades na escola ou na comunidade.
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-outline" onclick="closeAIModal()">Fechar Relatório</button>
+                    <button class="btn" style="background: #8e44ad; color: white; border: none;"
+                        onclick="exportAIReport()"><i class="fas fa-file-export"></i> Exportar PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Modal -->
+        <div class="modal-overlay" id="upload-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-title">Enviar para Pasta</h3>
+                    <button class="close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <p style="margin-bottom: 20px; color: var(--text-light); font-size: 0.9rem;">
+                        Os arquivos enviados serão sincronizados e compartilhados com todos os membros da equipe YEP.
+                    </p>
+
+                    <div class="upload-area" onclick="document.getElementById('real-file-input').click()">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h4>Arraste e solte seus arquivos aqui</h4>
+                        <p style="color: var(--text-light); margin-top: 8px; font-size: 0.85rem;">ou clique para
+                            selecionar do
+                            seu computador</p>
+                        <p
+                            style="color: var(--rotary-sky-blue); margin-top: 15px; font-size: 0.8rem; font-weight: 500;">
+                            Tamanho
+                            máximo: 50MB</p>
+                    </div>
+                    <input type="file" id="real-file-input" style="display: none;"
+                        onchange="window.handleFileUpload(event)">
+
+                    <div id="upload-progress" style="display: none; margin-top: 20px;">
+                        <div
+                            style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem;">
+                            <span id="upload-filename">Enviando arquivo...</span>
+                            <span id="upload-percentage">0%</span>
+                        </div>
+                        <div style="height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden;">
+                            <div id="upload-bar"
+                                style="height: 100%; width: 0%; background: var(--rotary-azure); transition: width 0.3s ease;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-outline" onclick="closeModal()">Cancelar</button>
+                    <button class="btn" style="opacity: 0.5; cursor: not-allowed;"
+                        id="save-upload-btn">Concluído</button>
+                </div>
+            </div>
+        </div>
+
+        <script type="module">
+            // ============================================================
+            // Firebase SDK Imports (consolidated here - single module block)
+            // ============================================================
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+            import {
+                getAuth, signInWithPopup, GoogleAuthProvider,
+                signInWithEmailAndPassword, createUserWithEmailAndPassword,
+                onAuthStateChanged, signOut
+            } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+            import {
+                getFirestore, collection, onSnapshot, query,
+                orderBy, limit, addDoc, doc, deleteDoc, serverTimestamp
+            } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+            import {
+                getStorage, ref, uploadBytesResumable, getDownloadURL
+            } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-storage.js";
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyA7cu4j4QasnBAt7_2jtAf6nS1mMKtXk-E",
+                authDomain: "yep-app-new-project-12345.firebaseapp.com",
+                projectId: "yep-app-new-project-12345",
+                storageBucket: "yep-app-new-project-12345.firebasestorage.app",
+                messagingSenderId: "343279430124",
+                appId: "1:343279430124:web:74d164c0d6c75e01db78c9"
+            };
+
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+            const storage = getStorage(app);
+            const googleProvider = new GoogleAuthProvider();
+
+            console.log("Firebase module loaded, auth:", !!auth);
+
+            // ============================================================
+            // Titles and icons for different views
+            // ============================================================
+            const viewData = {
+                'dashboard': { title: 'Visão Geral do Painel', icon: 'fa-chart-pie' },
+                'inbound': { title: 'Inbound Application', icon: 'fa-plane-arrival' },
+                'outbound': { title: 'Outbound Application', icon: 'fa-plane-departure' },
+                'settings': { title: 'Configurações da Equipe', icon: 'fa-cog' }
+            };
+            // Navigation Logic
+            const navItems = document.querySelectorAll('.nav-item[data-view]');
+            const viewSections = document.querySelectorAll('.view-section');
+            const pageTitle = document.getElementById('page-title');
+
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const targetViewId = item.getAttribute('data-view');
+                    if (!targetViewId) return;
+
+                    window.switchView(targetViewId);
+                });
+            });
+
+            window.switchView = function (viewId) {
+                // Update active nav
+                navItems.forEach(nav => nav.classList.remove('active'));
+                const activeNav = document.querySelector(`.nav-item[data-view="${viewId}"]`);
+                if (activeNav) activeNav.classList.add('active');
+
+                // Update sections
+                viewSections.forEach(section => section.classList.remove('active'));
+                const activeSection = document.getElementById(`view-${viewId}`);
+                if (activeSection) activeSection.classList.add('active');
+
+                // Update Title
+                const data = viewData[viewId];
+                if (data) {
+                    pageTitle.innerHTML = `<i class="fas ${data.icon}"></i> ${data.title}`;
+                }
+            }
+
+            // Modal Logic
+            const modal = document.getElementById('upload-modal');
+            const modalTitle = document.getElementById('modal-title');
+            let currentUploadTarget = '';
+
+            window.openUploadModal = function (folderName) {
+                modalTitle.innerText = `Upload to ${folderName} Application`;
+                currentUploadTarget = folderName.toLowerCase();
+                modal.classList.add('active');
+
+                // Reset upload UI
+                document.getElementById('upload-progress').style.display = 'none';
+                document.getElementById('upload-bar').style.width = '0%';
+                document.getElementById('save-upload-btn').style.opacity = '0.5';
+                document.getElementById('save-upload-btn').style.cursor = 'not-allowed';
+                document.getElementById('save-upload-btn').onclick = null;
+            }
+
+            window.closeModal = function () {
+                modal.classList.remove('active');
+            }
+
+            // Real file upload logic
+            window.handleFileUpload = async function (event) {
+                console.log("handleFileUpload started", event.target.files);
+                const file = event.target.files[0];
+                if (!file) {
+                    console.log("No file selected");
+                    return;
+                }
+
+                const user = auth.currentUser;
+                console.log("Current user:", user ? user.email : "NOT LOGGED IN");
+                if (!user) {
+                    alert("Você deve estar logado para enviar arquivos.");
+                    window.closeModal();
+                    return;
+                }
+
+                const progressContainer = document.getElementById('upload-progress');
+                const progressBar = document.getElementById('upload-bar');
+                const percentText = document.getElementById('upload-percentage');
+                const filenameText = document.getElementById('upload-filename');
+                const saveBtn = document.getElementById('save-upload-btn');
+
+                progressContainer.style.display = 'block';
+                filenameText.innerText = file.name;
+                progressBar.style.width = '0%';
+                progressBar.style.background = 'var(--rotary-azure)';
+                percentText.innerText = '0%';
+
+                try {
+                    // Create Storage Reference
+                    console.log("Generating storage path...");
+                    const storagePath = `applications/${currentUploadTarget}/${Date.now()}_${file.name}`;
+                    console.log("Storage path:", storagePath);
+                    const storageRef = ref(storage, storagePath);
+
+                    console.log("Starting upload task...");
+                    const uploadTask = uploadBytesResumable(storageRef, file);
+
+                    uploadTask.on('state_changed',
+                        (snapshot) => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            console.log(`Upload progress: ${Math.floor(progress)}%`);
+                            progressBar.style.width = `${progress}%`;
+                            percentText.innerText = `${Math.floor(progress)}%`;
+                        },
+                        (error) => {
+                            console.error("Firebase Storage Upload Error:", error);
+                            percentText.innerText = 'Erro no envio: ' + error.code;
+                            progressBar.style.background = '#e74c3c';
+                        },
+                        async () => {
+                            console.log("Upload task completed successfully! Getting download URL...");
+                            try {
+                                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                                console.log("Download URL obtained:", downloadURL);
+
+                                // Save metadata to Firestore
+                                console.log("Saving metadata to Firestore...");
+                                const newDoc = {
+                                    name: file.name,
+                                    size: (file.size / (1024 * 1024)).toFixed(2) + " MB",
+                                    uploaderId: user.uid,
+                                    uploaderName: user.displayName || user.email.split('@')[0],
+                                    type: currentUploadTarget, // 'inbound' or 'outbound'
+                                    url: downloadURL,
+                                    path: storagePath,
+                                    timestamp: serverTimestamp()
+                                };
+
+                                await addDoc(collection(db, "applications"), newDoc);
+                                console.log("Firestore document created successfully.");
+
+                                progressBar.style.width = `100%`;
+                                percentText.innerText = 'Concluído!';
+                                progressBar.style.background = '#2ecc71';
+
+                                saveBtn.style.opacity = '1';
+                                saveBtn.style.cursor = 'pointer';
+                                saveBtn.onclick = () => {
+                                    window.closeModal();
+                                    // Reset input so the same file can be picked again
+                                    document.getElementById('real-file-input').value = '';
+                                };
+                            } catch (e) {
+                                console.error("Error finalizing upload in completion callback:", e);
+                                percentText.innerText = 'Erro ao finalizar';
+                                progressBar.style.background = '#e74c3c';
+                            }
+                        }
+                    );
+                } catch (err) {
+                    console.error("Initial upload setup error:", err);
+                    percentText.innerText = 'Erro ao iniciar';
+                    progressBar.style.background = '#e74c3c';
+                }
+            }
+
+            // Add fake file to list
+            function addMockFile(targetList) {
+                const listId = `${targetList}-file-list`;
+                const list = document.getElementById(listId);
+                if (!list) return;
+
+                const newItem = document.createElement('div');
+                newItem.className = 'file-item';
+
+                const now = new Date();
+                const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                newItem.innerHTML = `
+                <div class="file-name">
+                    <div class="file-icon pdf"><i class="fas fa-file-pdf"></i></div>
+                    New_Document_${Math.floor(Math.random() * 1000)}.pdf
+                </div>
+                <div class="file-size">${(Math.random() * 5 + 0.1).toFixed(1)} MB</div>
+                <div class="file-owner">
+                    <div class="avatar" style="background: #9b59b6;">JP</div>
+                    João Pedro
+                </div>
+                <div class="file-date" style="text-align: right; display:flex; justify-content:flex-end; align-items:center; gap: 15px;">
+                    <span style="color: var(--rotary-azure); font-weight: 500;">Just now</span>
+                    <div class="file-actions">
+                        <button class="action-btn"><i class="fas fa-download"></i></button>
+                        <button class="action-btn"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+
+                // Insert after header
+                list.insertBefore(newItem, list.children[1]);
+            }
+
+            // AI RYE Reviewer Prompt (Full System Protocol)
+            const RYE_REVIEWER_PROMPT = `
+You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchange Program. Your task is to analyze uploaded student application forms (PDF) and produce a structured, detailed review report. 
+(Sections A-H, Overall Assessment, Red Flags included in logic)
+`;
+
+            const aiModal = document.getElementById('ai-modal');
+            const aiStatusBox = document.getElementById('ai-status-box');
+            const aiStatusText = document.getElementById('ai-status-text');
+            const aiProgressBar = document.getElementById('ai-progress-bar');
+            const aiReport = document.getElementById('ai-report');
+            const aiTargetStudent = document.getElementById('ai-target-student');
+            const aiStructuredContent = document.getElementById('ai-structured-content');
+            const aiRedFlagsList = document.getElementById('ai-red-flags-list');
+            const aiOverallSummary = document.getElementById('ai-overall-summary');
+
+            window.openAIHub = function () {
+                window.openAIAssistant('Batch_Analysis.pdf', 'Múltiplos Candidatos');
+            }
+
+            window.openAIAssistant = function (filename, studentName) {
+                aiModal.classList.add('active');
+                aiTargetStudent.innerText = studentName;
+                document.getElementById('ai-report-date').innerText = new Date().toLocaleDateString();
+
+                // Reset state
+                aiReport.style.display = 'none';
+                aiStatusBox.style.display = 'block';
+                aiProgressBar.style.width = '0%';
+                aiStructuredContent.innerHTML = '';
+                aiRedFlagsList.innerHTML = '';
+
+                // Detailed Simulation Sequence based on prompt sections
+                const sequence = [
+                    { text: 'A: Validando Identidade e Dados dos Pais...', progress: 15, time: 800 },
+                    { text: 'B: Analisando Cartas (Motivação e Pais)...', progress: 30, time: 1200 },
+                    { text: 'C: Verificando Histórico Médico e Vacinação...', progress: 45, time: 1000 },
+                    { text: 'D: Auditando Exame Odontológico...', progress: 55, time: 700 },
+                    { text: 'E/G: Validando Assinaturas e Endossos...', progress: 70, time: 900 },
+                    { text: 'H: Avaliando Referência Escolar e Notas...', progress: 85, time: 1100 },
+                    { text: 'Finalizando Relatório de Auditoria RYE...', progress: 100, time: 800 }
+                ];
+
+                let timeAccumulator = 0;
+                aiStatusText.innerHTML = `<i class="fas fa-cog ai-spinner"></i> Iniciando Auditoria RYE para <span style="font-weight:700;">${studentName}</span>...`;
+
+                sequence.forEach((step, index) => {
+                    timeAccumulator += step.time;
+                    setTimeout(() => {
+                        aiProgressBar.style.width = `${step.progress}%`;
+                        aiStatusText.innerHTML = `<i class="fas fa-cog ai-spinner"></i> ${step.text}`;
+
+                        if (index === sequence.length - 1) {
+                            setTimeout(() => window.showAIReport(studentName), 600);
+                        }
+                    }, timeAccumulator - step.time);
+                });
+            }
+
+            window.showAIReport = function (studentName) {
+                aiStatusBox.style.display = 'none';
+                aiReport.style.display = 'block';
+
+                // Map results based on the Sections A-H logic
+                const reportSections = [
+                    {
+                        id: 'personal', title: 'SECTION A – PERSONAL INFORMATION', data: [
+                            { key: 'Full Name', val: studentName + ' Silva' },
+                            { key: 'Nationality', val: 'Brazilian' },
+                            { key: 'Parent Rotarian', val: 'Yes (RC Belo Horizonte)' },
+                            { key: 'Emergency Contact', val: 'Pai (First)' }
+                        ]
+                    },
+                    {
+                        id: 'letters', title: 'SECTION B – LETTERS AND PHOTOS', data: [
+                            { key: 'Student Letter', val: '✅ Present (12 Topics covered)' },
+                            { key: 'Parent Letter', val: '✅ Present (7 Topics covered)' },
+                            { key: 'Photos', val: '✅ 4 Photos with captions' }
+                        ]
+                    },
+                    {
+                        id: 'medical', title: 'SECTION C – MEDICAL HISTORY', data: [
+                            { key: 'Physician', val: 'Dr. Roberto Santos' },
+                            { key: 'Conditions', val: 'None reported' },
+                            { key: 'Immunizations', val: '✅ Complete' }
+                        ]
+                    },
+                    {
+                        id: 'school', title: 'SECTION H – SCHOOL REFERENCE', data: [
+                            { key: 'Intellectual Ability', val: 'Excellent' },
+                            { key: 'Adaptability', val: 'Excellent' },
+                            { key: 'Recommendation', val: 'Strongly Recommend' }
+                        ]
+                    }
+                ];
+
+                reportSections.forEach(section => {
+                    let tableRows = '';
+                    section.data.forEach(item => {
+                        tableRows += `<tr><th>${item.key}</th><td>${item.val}</td></tr>`;
+                    });
+
+                    aiStructuredContent.innerHTML += `
+                        <div class="ai-report-card">
+                            <h4>${section.title}</h4>
+                            <table class="ai-data-table">${tableRows}</table>
+                        </div>
+                    `;
+                });
+
+                // Red Flags Simulation
+                const redFlags = [
+                    { status: 'check', text: 'Todos os endossos do Clube e Distrito estão assinados.' },
+                    { status: 'warn', text: 'Section F (Host) deixada em branco (Normal para submissão inicial).' },
+                    { status: 'check', text: 'Cópia do Passaporte válida por todo o período de intercâmbio.' }
+                ];
+
+                redFlags.forEach(flag => {
+                    const icon = flag.status === 'check' ? '<i class="fas fa-check ai-check"></i>' : '<i class="fas fa-exclamation-triangle ai-warn"></i>';
+                    aiRedFlagsList.innerHTML += `<li>${icon} <span>${flag.text}</span></li>`;
+                });
+
+                aiOverallSummary.innerText = `Candidato ${studentName} apresenta um perfil excepcional com forte recomendação escolar. Toda a documentação obrigatória (Seções A-E e G) está completa e assinada. O plano médico não apresenta restrições. Pronto para revisão final pelo Comitê do Distrito.`;
+            }
+
+            window.closeAIModal = function () {
+                aiModal.classList.remove('active');
+            }
+
+            window.exportAIReport = function () {
+                const btn = document.querySelector('.ai-modal .modal-footer .btn');
+                btn.innerHTML = '<i class="fas fa-check"></i> Relatório Exportado';
+                btn.style.background = '#2ecc71';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-file-export"></i> Exportar Auditoria';
+                    btn.style.background = '#8e44ad';
+                }, 2000);
+            }
+
+            // Firebase Authentication Logic
+            const loginView = document.getElementById('login-view');
+            const loginError = document.getElementById('login-error');
+
+            let dashboardUnsubscribe = null;
+
+            async function loadDashboardData() {
+                try {
+                    const filesRef = collection(db, "applications");
+                    const q = query(filesRef, orderBy("timestamp", "desc"), limit(50));
+
+                    if (dashboardUnsubscribe) dashboardUnsubscribe();
+
+                    dashboardUnsubscribe = onSnapshot(q, (querySnapshot) => {
+                        let total = 0;
+                        let inboundCount = 0;
+                        let outboundCount = 0;
+
+                        const inboundList = document.getElementById('inbound-file-list');
+                        const outboundList = document.getElementById('outbound-file-list');
+
+                        inboundList.innerHTML = `<div class="file-header"><div>Name</div><div>Size</div><div>Added By</div><div style="text-align: right;">Date</div></div>`;
+                        outboundList.innerHTML = `<div class="file-header"><div>Name</div><div>Size</div><div>Added By</div><div style="text-align: right;">Date</div></div>`;
+
+                        querySnapshot.forEach((doc) => {
+                            total++;
+                            const data = doc.data();
+
+                            let dateStr = "Just now";
+                            if (data.timestamp) {
+                                dateStr = data.timestamp.toDate().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                            }
+
+                            const itemHTML = `
+                            <div class="file-item">
+                                <div class="file-name">
+                                    <div class="file-icon pdf"><i class="fas fa-file-pdf"></i></div>
+                                    ${data.name}
+                                </div>
+                                <div class="file-size">${data.size}</div>
+                                <div class="file-owner">
+                                    <div class="avatar" style="background: #9b59b6;">${data.uploaderName.substring(0, 2).toUpperCase()}</div>
+                                    ${data.uploaderName}
+                                </div>
+                                <div class="file-date" style="text-align: right; display:flex; justify-content:flex-end; align-items:center; gap: 15px;">
+                                    <span>${dateStr}</span>
+                                    <div class="file-actions">
+                                        <button class="action-btn" title="AI Document Analysis" onclick="openAIAssistant('${data.name}', '${data.name.split('_')[1] || "Student"}')"><i class="fas fa-brain" style="color: #8e44ad;"></i></button>
+                                        <button class="action-btn"><i class="fas fa-download"></i></button>
+                                        <button class="action-btn" onclick="deleteDocument('${doc.id}')"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+                            if (data.type === 'inbound') {
+                                inboundCount++;
+                                inboundList.innerHTML += itemHTML;
+                            } else if (data.type === 'outbound') {
+                                outboundCount++;
+                                outboundList.innerHTML += itemHTML;
+                            }
+                        });
+
+                        document.getElementById('stat-total-apps').innerText = total;
+                        document.getElementById('stat-inbound').innerText = inboundCount;
+                        document.getElementById('stat-outbound').innerText = outboundCount;
+                    });
+
+                } catch (error) {
+                    console.error("Error loading dashboard data:", error);
+                }
+            }
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // User is signed in.
+                    loginView.style.display = 'none';
+
+                    // Update User Profile UI
+                    document.querySelector('.user-info h4').innerText = user.displayName || user.email.split('@')[0];
+                    document.querySelector('.user-info p').innerText = user.email;
+                    document.querySelector('.user-profile .avatar').innerText = (user.displayName || user.email).substring(0, 2).toUpperCase();
+
+                    loadDashboardData();
+                } else {
+                    // No user is signed in.
+                    loginView.style.display = 'flex';
+                    // Reset errors on show
+                    loginError.style.display = 'none';
+                    document.getElementById('login-email').value = '';
+                    document.getElementById('login-pwd').value = '';
+                }
+            });
+
+
+
+            function showLoginError(msg) {
+                loginError.innerText = msg;
+                loginError.style.display = 'block';
+            }
+
+            // ============================================================
+            // Bind auth buttons via addEventListener (module-safe approach)
+            // ============================================================
+            document.getElementById('btn-signin').addEventListener('click', () => {
+                console.log("Sign In clicked");
+                const email = document.getElementById('login-email').value.trim();
+                const password = document.getElementById('login-pwd').value;
+                if (!email || !password) { showLoginError('Please enter both email and password.'); return; }
+                signInWithEmailAndPassword(auth, email, password)
+                    .catch(err => showLoginError(err.message));
+            });
+
+            document.getElementById('btn-google-signin').addEventListener('click', () => {
+                console.log("Google Sign In clicked");
+                signInWithPopup(auth, googleProvider)
+                    .catch(err => showLoginError(err.message));
+            });
+
+            document.getElementById('link-register').addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log("Register clicked");
+                const email = document.getElementById('login-email').value.trim();
+                const password = document.getElementById('login-pwd').value;
+                if (!email || !password) { showLoginError('Please enter email and a password (min 6 chars) to register.'); return; }
+                createUserWithEmailAndPassword(auth, email, password)
+                    .catch(err => showLoginError(err.message));
+            });
+
+            // Logout - connect to sidebar last nav item
+            const logoutNav = document.querySelector('.nav-item:last-child');
+            if (logoutNav) {
+                logoutNav.addEventListener('click', () => {
+                    signOut(auth).catch(err => console.error("Logout error:", err));
+                });
+            }
+
+            // These need to be on window since they're called from dynamically generated HTML
+            window.deleteDocument = async (docId) => {
+                if (confirm("Are you sure you want to delete this application?")) {
+                    await deleteDoc(doc(db, "applications", docId));
+                }
+            };
+        </script>
+</body>
+
+</html>

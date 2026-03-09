@@ -1,0 +1,45 @@
+[debug] [2026-03-08T22:40:37.138Z] ----------------------------------------------------------------------
+[debug] [2026-03-08T22:40:37.140Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Guilherme\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve
+[debug] [2026-03-08T22:40:37.140Z] CLI Version:   15.9.0
+[debug] [2026-03-08T22:40:37.140Z] Platform:      win32
+[debug] [2026-03-08T22:40:37.140Z] Node Version:  v25.5.0
+[debug] [2026-03-08T22:40:37.140Z] Time:          Sun Mar 08 2026 19:40:37 GMT-0300 (Brasilia Standard Time)
+[debug] [2026-03-08T22:40:37.141Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-03-08T22:40:38.157Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-03-08T22:40:38.157Z] > authorizing via signed-in user (belmani@gmail.com)
+[debug] [2026-03-08T22:40:38.157Z] [iam] checking project yep-app-new-project-12345 for permissions ["firebase.projects.get"]
+[debug] [2026-03-08T22:40:38.158Z] Checked if tokens are valid: true, expires at: 1773010565231
+[debug] [2026-03-08T22:40:38.158Z] Checked if tokens are valid: true, expires at: 1773010565231
+[debug] [2026-03-08T22:40:38.159Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/yep-app-new-project-12345:testIamPermissions [none]
+[debug] [2026-03-08T22:40:38.159Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/yep-app-new-project-12345:testIamPermissions  x-goog-user-project=yep-app-new-project-12345
+[debug] [2026-03-08T22:40:38.159Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/yep-app-new-project-12345:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2026-03-08T22:40:39.086Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/yep-app-new-project-12345:testIamPermissions 200
+[debug] [2026-03-08T22:40:39.087Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/yep-app-new-project-12345:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2026-03-08T22:40:39.087Z] Checked if tokens are valid: true, expires at: 1773010565231
+[debug] [2026-03-08T22:40:39.087Z] Checked if tokens are valid: true, expires at: 1773010565231
+[debug] [2026-03-08T22:40:39.087Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/yep-app-new-project-12345 [none]
+[debug] [2026-03-08T22:40:39.294Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/yep-app-new-project-12345 200
+[debug] [2026-03-08T22:40:39.294Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/yep-app-new-project-12345 {"projectNumber":"343279430124","projectId":"yep-app-new-project-12345","lifecycleState":"ACTIVE","name":"YEP Application Project","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2026-03-08T18:17:28.560846Z"}
+[info] 
+[info] === Serving from 'C:\Users\Guilherme\.gemini\antigravity\playground\inertial-sagan'...
+[info] 
+[debug] [2026-03-08T22:40:39.296Z] Checked if tokens are valid: true, expires at: 1773010565231
+[debug] [2026-03-08T22:40:39.296Z] Checked if tokens are valid: true, expires at: 1773010565231
+[debug] [2026-03-08T22:40:39.296Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/yep-app-new-project-12345/sites 
+[debug] [2026-03-08T22:40:40.640Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/yep-app-new-project-12345/sites 200
+[debug] [2026-03-08T22:40:40.640Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/yep-app-new-project-12345/sites {"sites":[{"name":"projects/yep-app-new-project-12345/sites/yep-app-new-project-12345","defaultUrl":"https://yep-app-new-project-12345.web.app","type":"DEFAULT_SITE"}]}
+[debug] [2026-03-08T22:40:40.640Z] Checked if tokens are valid: true, expires at: 1773010565231
+[debug] [2026-03-08T22:40:40.640Z] Checked if tokens are valid: true, expires at: 1773010565231
+[debug] [2026-03-08T22:40:40.641Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/yep-app-new-project-12345/webApps/-/config [none]
+[debug] [2026-03-08T22:40:41.626Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/yep-app-new-project-12345/webApps/-/config 200
+[debug] [2026-03-08T22:40:41.626Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/yep-app-new-project-12345/webApps/-/config {"projectId":"yep-app-new-project-12345","appId":"1:343279430124:web:8669dfc5fd9c7cc7db78c9","storageBucket":"yep-app-new-project-12345.firebasestorage.app","apiKey":"AIzaSyC3y3CU2fj4fzOytGyVGAlaNaWAAr2QsHA","authDomain":"yep-app-new-project-12345.firebaseapp.com","messagingSenderId":"343279430124","projectNumber":"343279430124","version":"2"}
+[debug] [2026-03-08T22:40:41.631Z] Checked if tokens are valid: true, expires at: 1773010565231
+[debug] [2026-03-08T22:40:41.632Z] Checked if tokens are valid: true, expires at: 1773010565231
+[debug] [2026-03-08T22:40:41.632Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/yep-app-new-project-12345 [none]
+[debug] [2026-03-08T22:40:41.967Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/yep-app-new-project-12345 200
+[debug] [2026-03-08T22:40:41.967Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/yep-app-new-project-12345 {"projectId":"yep-app-new-project-12345","projectNumber":"343279430124","displayName":"YEP Application Project","name":"projects/yep-app-new-project-12345","resources":{"hostingSite":"yep-app-new-project-12345"},"state":"ACTIVE","etag":"1_7c31d185-5ded-4d87-82ee-2a39cc1918e0"}
+[info] +  hosting[yep-app-new-project-12345]: Local server: http://localhost:5000 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://localhost:5000\u001b[22m\u001b[24m"}}
+[info] i  hosting: 127.0.0.1 - - [08/Mar/2026:22:41:04 +0000] "GET / HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [08/Mar/2026:22:41:04 +0000] \"GET / HTTP/1.1\" 200 - \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\""}}
+[info] i  hosting: 127.0.0.1 - - [08/Mar/2026:22:41:04 +0000] "GET /favicon.ico HTTP/1.1" 200 - "http://localhost:5000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [08/Mar/2026:22:41:04 +0000] \"GET /favicon.ico HTTP/1.1\" 200 - \"http://localhost:5000/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\""}}
+[info] i  hosting: 127.0.0.1 - - [08/Mar/2026:22:47:43 +0000] "GET / HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36" {"metadata":{"emulator":{"name":"hosting"},"message":"127.0.0.1 - - [08/Mar/2026:22:47:43 +0000] \"GET / HTTP/1.1\" 200 - \"-\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36\""}}

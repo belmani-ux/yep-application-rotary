@@ -1570,7 +1570,7 @@
         } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
         import {
             getFirestore, collection, onSnapshot, query,
-            orderBy, limit, addDoc, doc, deleteDoc, serverTimestamp
+            orderBy, limit, addDoc, doc, deleteDoc, serverTimestamp, setDoc, getDoc
         } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
         import {
             getStorage, ref, uploadBytesResumable, getDownloadURL
@@ -2183,6 +2183,27 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
             loginError.style.display = 'block';
         }
 
+        // Helper to add user to team collection if not exists
+        async function syncUserToTeam(user, name, role = 'Membro') {
+            try {
+                // To avoid duplicate documents, use the user's UID as the document ID
+                const userRef = doc(db, "team", user.uid);
+                const userSnap = await getDoc(userRef);
+
+                if (!userSnap.exists()) {
+                    await setDoc(userRef, {
+                        email: user.email,
+                        name: name,
+                        role: role,
+                        createdAt: serverTimestamp()
+                    });
+                    console.log("User added to team collection");
+                }
+            } catch (error) {
+                console.error("Error syncing user to team:", error);
+            }
+        }
+
         // ============================================================
         // Bind auth buttons via addEventListener (module-safe approach)
         // ============================================================
@@ -2198,6 +2219,12 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
         document.getElementById('btn-google-signin').addEventListener('click', () => {
             console.log("Google Sign In clicked");
             signInWithPopup(auth, googleProvider)
+                .then(async (result) => {
+                    const user = result.user;
+                    const name = user.displayName || user.email.split('@')[0];
+                    const role = user.email === 'belmani@gmail.com' ? 'Admin' : 'Membro';
+                    await syncUserToTeam(user, name, role);
+                })
                 .catch(err => showLoginError(err.message));
         });
 
@@ -2208,6 +2235,12 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
             const password = document.getElementById('login-pwd').value;
             if (!email || !password) { showLoginError('Please enter email and a password (min 6 chars) to register.'); return; }
             createUserWithEmailAndPassword(auth, email, password)
+                .then(async (userCredential) => {
+                    const user = userCredential.user;
+                    const name = user.email.split('@')[0]; // No display name available yet for email signup
+                    const role = user.email === 'belmani@gmail.com' ? 'Admin' : 'Membro';
+                    await syncUserToTeam(user, name, role);
+                })
                 .catch(err => showLoginError(err.message));
         });
 

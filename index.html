@@ -1275,37 +1275,15 @@
                     <h2>Atividade Global Recente</h2>
                 </div>
 
-                <div class="file-list">
+                <div class="file-list" id="global-activity-list">
                     <div class="file-header">
                         <div>Nome</div>
                         <div>Tamanho</div>
                         <div>Adicionado Por</div>
                         <div style="text-align: right;">Data</div>
                     </div>
-
-                    <div class="file-item">
-                        <div class="file-name">
-                            <div class="file-icon pdf"><i class="fas fa-file-pdf"></i></div>
-                            Main_Application_John_Doe.pdf
-                        </div>
-                        <div class="file-size">4.2 MB</div>
-                        <div class="file-owner">
-                            <div class="avatar" style="background: #3498db;">MC</div>
-                            Maria Costa
-                        </div>
-                        <div class="file-date" style="text-align: right;">Hoje, 10:23</div>
-                    </div>
-                    <div class="file-item">
-                        <div class="file-name">
-                            <div class="file-icon img"><i class="fas fa-file-image"></i></div>
-                            Passport_Photo_Jane_S.jpg
-                        </div>
-                        <div class="file-size">1.8 MB</div>
-                        <div class="file-owner">
-                            <div class="avatar" style="background: #e74c3c;">AB</div>
-                            Ana Borges
-                        </div>
-                        <div class="file-date" style="text-align: right;">Ontem, 14:45</div>
+                    <div class="file-item" style="justify-content:center; color: var(--text-light); padding: 20px;">
+                        <i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i> Carregando atividade...
                     </div>
                 </div>
             </div>
@@ -1923,24 +1901,48 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
 
                     const inboundList = document.getElementById('inbound-file-list');
                     const outboundList = document.getElementById('outbound-file-list');
+                    const activityList = document.getElementById('global-activity-list');
 
-                    inboundList.innerHTML = `<div class="file-header"><div>Name</div><div>Size</div><div>Added By</div><div style="text-align: right;">Date</div></div>`;
-                    outboundList.innerHTML = `<div class="file-header"><div>Name</div><div>Size</div><div>Added By</div><div style="text-align: right;">Date</div></div>`;
+                    const listHeader = `<div class="file-header"><div>Nome</div><div>Tamanho</div><div>Adicionado Por</div><div style="text-align: right;">Data</div></div>`;
+                    inboundList.innerHTML = listHeader;
+                    outboundList.innerHTML = listHeader;
+                    activityList.innerHTML = listHeader;
 
-                    querySnapshot.forEach((doc) => {
+                    if (querySnapshot.empty) {
+                        activityList.innerHTML += `<div class="file-item" style="justify-content:center; color: var(--text-light); padding: 20px;">Nenhuma atividade recente encontrada.</div>`;
+                    }
+
+                    querySnapshot.forEach((docSnap) => {
                         total++;
-                        const data = doc.data();
+                        const data = docSnap.data();
 
-                        let dateStr = "Just now";
+                        let dateStr = "Agora";
+                        let fullDateStr = "";
                         if (data.timestamp) {
-                            dateStr = data.timestamp.toDate().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                            const d = data.timestamp.toDate();
+                            const now = new Date();
+                            const diffMs = now - d;
+                            const diffMins = Math.floor(diffMs / 60000);
+                            const diffHours = Math.floor(diffMins / 60);
+                            const diffDays = Math.floor(diffHours / 24);
+                            if (diffMins < 1) dateStr = "Agora";
+                            else if (diffMins < 60) dateStr = `${diffMins}m atrás`;
+                            else if (diffHours < 24) dateStr = `${diffHours}h atrás`;
+                            else if (diffDays === 1) dateStr = "Ontem";
+                            else dateStr = d.toLocaleDateString('pt-BR', { month: 'short', day: 'numeric', year: 'numeric' });
+                            fullDateStr = d.toLocaleDateString('pt-BR', { month: 'short', day: 'numeric', year: 'numeric' });
                         }
+
+                        const typeLabel = data.type === 'inbound' ? '<span style="color:var(--rotary-azure);font-size:0.75rem;font-weight:600;">INBOUND</span>' : '<span style="color:var(--rotary-gold);font-size:0.75rem;font-weight:600;">OUTBOUND</span>';
 
                         const itemHTML = `
                             <div class="file-item">
                                 <div class="file-name">
                                     <div class="file-icon pdf"><i class="fas fa-file-pdf"></i></div>
-                                    ${data.name}
+                                    <div>
+                                        <div>${data.name}</div>
+                                        <div style="margin-top:3px;">${typeLabel}</div>
+                                    </div>
                                 </div>
                                 <div class="file-size">${data.size}</div>
                                 <div class="file-owner">
@@ -1948,14 +1950,37 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
                                     ${data.uploaderName}
                                 </div>
                                 <div class="file-date" style="text-align: right; display:flex; justify-content:flex-end; align-items:center; gap: 15px;">
-                                    <span>${dateStr}</span>
+                                    <span>${fullDateStr || dateStr}</span>
                                     <div class="file-actions">
-                                        <button class="action-btn"><i class="fas fa-download"></i></button>
-                                        <button class="action-btn" onclick="deleteDocument('${doc.id}')"><i class="fas fa-trash"></i></button>
+                                        <button class="action-btn" title="Download"><i class="fas fa-download"></i></button>
+                                        <button class="action-btn" onclick="deleteDocument('${docSnap.id}')" title="Excluir"><i class="fas fa-trash"></i></button>
                                     </div>
                                 </div>
                             </div>
                         `;
+
+                        // Activity feed item (with relative time)
+                        const activityItemHTML = `
+                            <div class="file-item">
+                                <div class="file-name">
+                                    <div class="file-icon pdf"><i class="fas fa-file-pdf"></i></div>
+                                    <div>
+                                        <div>${data.name}</div>
+                                        <div style="margin-top:3px;">${typeLabel}</div>
+                                    </div>
+                                </div>
+                                <div class="file-size">${data.size}</div>
+                                <div class="file-owner">
+                                    <div class="avatar" style="background: #9b59b6;">${data.uploaderName.substring(0, 2).toUpperCase()}</div>
+                                    ${data.uploaderName}
+                                </div>
+                                <div class="file-date" style="text-align: right;">
+                                    <span style="color: var(--rotary-azure); font-weight: 500;">${dateStr}</span>
+                                </div>
+                            </div>
+                        `;
+
+                        activityList.innerHTML += activityItemHTML;
 
                         if (data.type === 'inbound') {
                             inboundCount++;

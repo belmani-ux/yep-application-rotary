@@ -1586,7 +1586,7 @@
         } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
         import {
             getFirestore, collection, onSnapshot, query,
-            orderBy, limit, addDoc, doc, deleteDoc, serverTimestamp, setDoc, getDoc, updateDoc
+            orderBy, limit, addDoc, doc, deleteDoc, serverTimestamp, setDoc, getDoc, updateDoc, getDocs, where
         } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
         import {
             getStorage, ref, uploadBytesResumable, getDownloadURL
@@ -2294,29 +2294,52 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
         // Helper to add user to team collection if not exists
         async function syncUserToTeam(user, name, role = 'Membro') {
             try {
-                // To avoid duplicate documents, use the user's UID as the document ID
                 const userRef = doc(db, "team", user.uid);
                 const userSnap = await getDoc(userRef);
 
                 if (!userSnap.exists()) {
-                    const status = role === 'Admin' ? 'aprovado' : 'pendente';
-                    const photoURL = user.photoURL || null;
-                    await setDoc(userRef, {
-                        email: user.email,
-                        name: name,
-                        role: role,
-                        status: status,
-                        photoURL: photoURL,
-                        createdAt: serverTimestamp()
-                    });
-                    console.log("User added to team collection with status:", status);
+                    // Check if there's a pre-invite entry by email (created by admin via invite form)
+                    const inviteQuery = query(collection(db, "team"), where("email", "==", user.email));
+                    const inviteSnap = await getDocs(inviteQuery);
 
-                    if (status === 'pendente') {
-                        const photoSection = photoURL
-                            ? `<img src="${photoURL}" alt="Foto do usuário" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #003399;margin-bottom:12px;" /><br/>`
-                            : `<div style="width:80px;height:80px;border-radius:50%;background:#003399;color:white;font-size:2rem;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">${name.substring(0, 2).toUpperCase()}</div><br/>`;
+                    if (!inviteSnap.empty) {
+                        // Found an invite doc — migrate it to use UID as the document ID
+                        const inviteDoc = inviteSnap.docs[0];
+                        const inviteData = inviteDoc.data();
 
-                        const emailBody = `
+                        // Create authoritative doc keyed by UID with invite role/status
+                        await setDoc(userRef, {
+                            email: user.email,
+                            name: name,
+                            role: inviteData.role || role,
+                            status: inviteData.status || 'aprovado',
+                            photoURL: user.photoURL || null,
+                            createdAt: inviteData.createdAt || serverTimestamp()
+                        });
+
+                        // Remove old invite doc (keyed by random ID)
+                        await deleteDoc(inviteDoc.ref);
+                        console.log("Invite doc migrated to UID-keyed doc — status: aprovado");
+                    } else {
+                        // Brand new user — set to pending and notify admin
+                        const status = role === 'Admin' ? 'aprovado' : 'pendente';
+                        const photoURL = user.photoURL || null;
+                        await setDoc(userRef, {
+                            email: user.email,
+                            name: name,
+                            role: role,
+                            status: status,
+                            photoURL: photoURL,
+                            createdAt: serverTimestamp()
+                        });
+                        console.log("User added to team collection with status:", status);
+
+                        if (status === 'pendente') {
+                            const photoSection = photoURL
+                                ? `<img src="${photoURL}" alt="Foto do usuário" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #003399;margin-bottom:12px;" /><br/>`
+                                : `<div style="width:80px;height:80px;border-radius:50%;background:#003399;color:white;font-size:2rem;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">${name.substring(0, 2).toUpperCase()}</div><br/>`;
+
+                            const emailBody = `
                         <!DOCTYPE html>
                         <html lang="pt-BR">
                         <body style="font-family:Arial,sans-serif;background:#f4f6f9;margin:0;padding:20px;">
@@ -2341,17 +2364,18 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
                         </body>
                         </html>`;
 
-                        await addDoc(collection(db, "mail"), {
-                            to: 'belmani@gmail.com',
-                            message: {
-                                subject: `[Rotary 4521] Novo usuário aguardando aprovação: ${name}`,
-                                html: emailBody,
-                                text: `Novo usuário solicitando acesso: ${name} (${user.email}).\n\nAcesse o painel para aprovar: https://rotary-distrito-4521.vercel.app/`
-                            }
-                        });
-                        console.log("Admin notification email queued with rich HTML.");
-                    }
-                }
+                            await addDoc(collection(db, "mail"), {
+                                to: 'belmani@gmail.com',
+                                message: {
+                                    subject: `[Rotary 4521] Novo usuário aguardando aprovação: ${name}`,
+                                    html: emailBody,
+                                    text: `Novo usuário solicitando acesso: ${name} (${user.email}).\n\nAcesse o painel para aprovar: https://rotary-distrito-4521.vercel.app/`
+                                }
+                            });
+                            console.log("Admin notification email queued with rich HTML.");
+                        }
+                    } // end else (brand new user)
+                } // end if (!userSnap.exists())
             } catch (error) {
                 console.error("Error syncing user to team:", error);
             }
@@ -2474,6 +2498,7 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
                     email: email,
                     role: role,
                     name: email.split('@')[0],
+                    status: 'aprovado',
                     createdAt: serverTimestamp()
                 });
 

@@ -1366,6 +1366,22 @@
                 </div>
             </div>
 
+            <!-- PENDING VIEW -->
+            <div id="view-pending" class="view-section"
+                style="display:none; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center; padding: 40px;">
+                <i class="fas fa-lock" style="font-size: 4rem; color: var(--rotary-gold); margin-bottom: 20px;"></i>
+                <h2 style="color: var(--rotary-royal-blue); margin-bottom: 10px;">Acesso Pendente</h2>
+                <p style="color: var(--text-light); max-width: 400px; line-height: 1.6;">
+                    Sua conta foi criada com sucesso, mas está aguardando a aprovação do administrador para acessar os
+                    arquivos do Rotary Distrito 4521.
+                    <br><br>
+                    Por favor, aguarde. O administrador já foi notificado.
+                </p>
+                <button class="btn" style="margin-top: 30px;" onclick="window.location.reload()">
+                    <i class="fas fa-sync-alt"></i> Atualizar Página
+                </button>
+            </div>
+
             <!-- OUTBOUND VIEW -->
             <div id="view-outbound" class="view-section">
                 <div class="section-header">
@@ -1570,7 +1586,7 @@
         } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
         import {
             getFirestore, collection, onSnapshot, query,
-            orderBy, limit, addDoc, doc, deleteDoc, serverTimestamp, setDoc, getDoc
+            orderBy, limit, addDoc, doc, deleteDoc, serverTimestamp, setDoc, getDoc, updateDoc
         } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
         import {
             getStorage, ref, uploadBytesResumable, getDownloadURL
@@ -2088,23 +2104,49 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
 
                     const roleColor = data.role === 'Admin' ? 'var(--rotary-gold)' : (data.role === 'Coordenador' ? 'var(--rotary-sky-blue)' : 'var(--text-light)');
 
+                    const isPending = data.status === 'pendente';
+                    const isRejected = data.status === 'rejeitado';
+
+                    const statusBadge = isPending
+                        ? `<span style="font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:12px;background:#fef08a;color:#854d0e;margin-left:8px;">Pendente</span>`
+                        : isRejected
+                            ? `<span style="font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:12px;background:#fee2e2;color:#dc2626;margin-left:8px;">Recusado</span>`
+                            : '';
+
+                    const approveBtn = isPending
+                        ? `<button onclick="window.approveTeamMember('${docSnap.id}')" style="width:32px;height:32px;border-radius:8px;border:none;background:#dcfce7;color:#16a34a;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s;" title="Aprovar Membro" onmouseover="this.style.background='#bbf7d0'" onmouseout="this.style.background='#dcfce7'">
+                                <i class="fas fa-check"></i>
+                           </button>`
+                        : '';
+
+                    const rejectBtn = isPending
+                        ? `<button onclick="window.rejectTeamMember('${docSnap.id}')" style="width:32px;height:32px;border-radius:8px;border:none;background:#fef3c7;color:#d97706;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s;" title="Recusar Membro" onmouseover="this.style.background='#fde68a'" onmouseout="this.style.background='#fef3c7'">
+                                <i class="fas fa-times"></i>
+                           </button>`
+                        : '';
+
+                    const avatarHTML = data.photoURL
+                        ? `<img src="${data.photoURL}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" /><div class="avatar" style="display:none;width:40px;height:40px;font-size:0.9rem;background:var(--rotary-azure);color:white;flex-shrink:0;align-items:center;justify-content:center;">${(data.name || data.email).substring(0, 2).toUpperCase()}</div>`
+                        : `<div class="avatar" style="width:40px;height:40px;font-size:0.9rem;background:var(--rotary-azure);color:white;flex-shrink:0;">${(data.name || data.email).substring(0, 2).toUpperCase()}</div>`;
+
                     const memberHTML = `
                         <div style="display:flex;align-items:center;padding:16px;border-bottom:1px solid #f0f4f8;gap:16px;">
-                            <div class="avatar" style="width:40px;height:40px;font-size:0.9rem;background:var(--rotary-azure);color:white;flex-shrink:0;">
-                                ${(data.name || data.email).substring(0, 2).toUpperCase()}
-                            </div>
+                            ${avatarHTML}
                             <div style="flex:1;min-width:0;">
                                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
                                     <h4 style="font-size:0.95rem;font-weight:600;color:var(--text-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0;">
                                         ${data.name || data.email.split('@')[0]}
                                     </h4>
                                     <span style="font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:12px;background:#f0f4f8;color:${roleColor};">${data.role || 'Membro'}</span>
+                                    ${statusBadge}
                                 </div>
                                 <p style="font-size:0.85rem;color:var(--text-light);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                                     ${data.email}
                                 </p>
                             </div>
                             <div style="display:flex;gap:8px;" class="admin-only-action">
+                                ${approveBtn}
+                                ${rejectBtn}
                                 <button onclick="window.removeTeamMember('${docSnap.id}')" style="width:32px;height:32px;border-radius:8px;border:none;background:#fee2e2;color:#ef4444;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s;" title="Remover Membro" onmouseover="this.style.background='#fecaca'" onmouseout="this.style.background='#fee2e2'">
                                     <i class="fas fa-trash"></i>
                                 </button>
@@ -2128,17 +2170,83 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
             });
         }
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 // Check if user is the master admin
                 const isAdmin = user.email === 'belmani@gmail.com';
 
-                // User is signed in.
+                // STEP 1: Hide login, but ALSO hide the whole app shell while we verify
                 loginView.style.display = 'none';
+                const sidebar = document.querySelector('.sidebar');
+                const mainContent = document.querySelector('.main-content');
+                if (sidebar) sidebar.style.visibility = 'hidden';
+                if (mainContent) mainContent.style.visibility = 'hidden';
+
+                // STEP 2: Check Firestore status BEFORE revealing any UI
+                let isBlocked = false;
+                let userRole = 'Membro';
+                let blockReason = 'Acesso Pendente';
+                try {
+                    const userSnap = await getDoc(doc(db, "team", user.uid));
+                    if (userSnap.exists()) {
+                        const userData = userSnap.data();
+                        const status = userData.status;
+                        // 'ativo' is the legacy status, 'aprovado' is the new one — both grant access
+                        isBlocked = status === 'pendente' || status === 'rejeitado';
+                        blockReason = status === 'rejeitado' ? 'Acesso Recusado' : 'Acesso Pendente';
+                        userRole = userData.role || 'Membro';
+                    } else {
+                        // No Firestore document yet — block access as a safety measure
+                        isBlocked = true;
+                        blockReason = 'Acesso Pendente';
+                    }
+                } catch (e) {
+                    console.error("Error fetching user status:", e);
+                    // On error, block as safety measure for non-admins
+                    if (!isAdmin) isBlocked = true;
+                }
+
+                // STEP 3: NOW reveal the correct UI based on status
+                if (isBlocked && !isAdmin) {
+                    // Stay hidden (sidebar/main are invisible), show pending view
+                    document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+                    document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none');
+                    document.getElementById('view-pending').style.display = 'flex';
+
+                    // Show sidebar so user can at least see their name and logout
+                    if (sidebar) sidebar.style.visibility = 'visible';
+                    if (mainContent) mainContent.style.visibility = 'visible';
+
+                    // Hide navigation links except logout
+                    document.querySelectorAll('.nav-item').forEach(item => {
+                        if (!item.querySelector('.fa-sign-out-alt')) {
+                            item.style.display = 'none';
+                        } else {
+                            item.style.display = 'flex';
+                        }
+                    });
+
+                    // Update User Profile UI to show blocked state
+                    document.querySelector('.user-info h4').innerText = user.displayName || user.email.split('@')[0];
+                    document.querySelector('.user-info p').innerText = blockReason;
+                    document.querySelector('.user-profile .avatar').innerText = (user.displayName || user.email).substring(0, 2).toUpperCase();
+
+                    return; // Stop further loading
+                }
+
+                // STEP 4: User is approved — reveal app shell and proceed normally
+                if (sidebar) sidebar.style.visibility = 'visible';
+                if (mainContent) mainContent.style.visibility = 'visible';
+                document.getElementById('view-pending').style.display = 'none';
+
+                // Make sure navigation links are all visible
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.style.display = 'flex';
+                });
 
                 // Update User Profile UI
                 document.querySelector('.user-info h4').innerText = user.displayName || user.email.split('@')[0];
-                document.querySelector('.user-info p').innerText = user.email;
+                document.querySelector('.user-info p').innerText = userRole;
                 document.querySelector('.user-profile .avatar').innerText = (user.displayName || user.email).substring(0, 2).toUpperCase();
 
                 // Update Settings Profile UI
@@ -2151,7 +2259,6 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
 
                 // Restrict UI based on admin status
                 const settingsNavItem = document.querySelector('.nav-item[onclick*="view-settings"]');
-                const inviteSection = document.getElementById('invite-section'); // Let's wrap invite section in HTML later or specify here
                 const settingsView = document.getElementById('view-settings');
 
                 if (isAdmin) {
@@ -2159,7 +2266,7 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
                 } else {
                     if (settingsNavItem) settingsNavItem.style.display = 'none';
                     // If they are somehow on the settings view, redirect to dashboard
-                    if (settingsView.classList.contains('active')) {
+                    if (settingsView && settingsView.classList.contains('active')) {
                         document.querySelector('.nav-item[onclick*="view-dashboard"]').click();
                     }
                 }
@@ -2168,6 +2275,7 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
                 loadTeamMembers();
             } else {
                 // No user is signed in.
+                document.getElementById('view-pending').style.display = 'none';
                 loginView.style.display = 'flex';
                 // Reset errors on show
                 loginError.style.display = 'none';
@@ -2191,13 +2299,58 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
                 const userSnap = await getDoc(userRef);
 
                 if (!userSnap.exists()) {
+                    const status = role === 'Admin' ? 'aprovado' : 'pendente';
+                    const photoURL = user.photoURL || null;
                     await setDoc(userRef, {
                         email: user.email,
                         name: name,
                         role: role,
+                        status: status,
+                        photoURL: photoURL,
                         createdAt: serverTimestamp()
                     });
-                    console.log("User added to team collection");
+                    console.log("User added to team collection with status:", status);
+
+                    if (status === 'pendente') {
+                        const photoSection = photoURL
+                            ? `<img src="${photoURL}" alt="Foto do usuário" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #003399;margin-bottom:12px;" /><br/>`
+                            : `<div style="width:80px;height:80px;border-radius:50%;background:#003399;color:white;font-size:2rem;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">${name.substring(0, 2).toUpperCase()}</div><br/>`;
+
+                        const emailBody = `
+                        <!DOCTYPE html>
+                        <html lang="pt-BR">
+                        <body style="font-family:Arial,sans-serif;background:#f4f6f9;margin:0;padding:20px;">
+                            <div style="max-width:520px;margin:auto;background:white;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08);">
+                                <div style="background:linear-gradient(135deg,#003399,#0066CC);padding:32px;text-align:center;">
+                                    <h1 style="color:white;font-size:1.4rem;margin:0;">Rotary Distrito 4521</h1>
+                                    <p style="color:rgba(255,255,255,0.8);font-size:0.9rem;margin:8px 0 0;">YEP Application – Painel Administrativo</p>
+                                </div>
+                                <div style="padding:32px;text-align:center;">
+                                    ${photoSection}
+                                    <h2 style="color:#1e293b;font-size:1.2rem;margin:0 0 8px;">Novo Usuário Aguardando Aprovação</h2>
+                                    <p style="color:#64748b;font-size:0.95rem;margin:0 0 24px;">Um novo usuário solicitou acesso ao painel do Rotary Distrito 4521. Veja os detalhes abaixo:</p>
+                                    <div style="background:#f8fafc;border-radius:12px;padding:20px;text-align:left;margin-bottom:24px;">
+                                        <p style="margin:0 0 8px;"><strong>Nome:</strong> ${name}</p>
+                                        <p style="margin:0 0 8px;"><strong>E-mail:</strong> ${user.email}</p>
+                                        <p style="margin:0;"><strong>Conta Google:</strong> Sim</p>
+                                    </div>
+                                    <a href="https://rotary-distrito-4521.vercel.app/" style="display:inline-block;background:#003399;color:white;text-decoration:none;padding:14px 32px;border-radius:10px;font-weight:bold;font-size:0.95rem;">Acessar Painel para Aprovar</a>
+                                    <p style="color:#94a3b8;font-size:0.8rem;margin-top:24px;">Acesse Configurações &gt; Membros da Equipe para aprovar ou recusar este usuário.</p>
+                                </div>
+                            </div>
+                        </body>
+                        </html>`;
+
+                        await addDoc(collection(db, "mail"), {
+                            to: 'belmani@gmail.com',
+                            message: {
+                                subject: `[Rotary 4521] Novo usuário aguardando aprovação: ${name}`,
+                                html: emailBody,
+                                text: `Novo usuário solicitando acesso: ${name} (${user.email}).\n\nAcesse o painel para aprovar: https://rotary-distrito-4521.vercel.app/`
+                            }
+                        });
+                        console.log("Admin notification email queued with rich HTML.");
+                    }
                 }
             } catch (error) {
                 console.error("Error syncing user to team:", error);
@@ -2224,6 +2377,7 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
                     const name = user.displayName || user.email.split('@')[0];
                     const role = user.email === 'belmani@gmail.com' ? 'Admin' : 'Membro';
                     await syncUserToTeam(user, name, role);
+                    await auth.currentUser.reload();
                 })
                 .catch(err => showLoginError(err.message));
         });
@@ -2256,6 +2410,32 @@ You are an expert reviewer for the Rotary Youth Exchange (RYE) Long-Term Exchang
         window.deleteDocument = async (docId) => {
             if (confirm("Are you sure you want to delete this application?")) {
                 await deleteDoc(doc(db, "applications", docId));
+            }
+        };
+
+        window.approveTeamMember = async (docId) => {
+            if (confirm("Deseja aprovar este usuário para acessar o sistema?")) {
+                try {
+                    await updateDoc(doc(db, "team", docId), {
+                        status: 'aprovado'
+                    });
+                } catch (error) {
+                    console.error("Erro ao aprovar membro:", error);
+                    alert("Ocorreu um erro ao aprovar o membro.");
+                }
+            }
+        };
+
+        window.rejectTeamMember = async (docId) => {
+            if (confirm("Deseja RECUSAR o acesso deste usuário? Ele não poderá acessar o sistema.")) {
+                try {
+                    await updateDoc(doc(db, "team", docId), {
+                        status: 'rejeitado'
+                    });
+                } catch (error) {
+                    console.error("Erro ao recusar membro:", error);
+                    alert("Ocorreu um erro ao recusar o membro.");
+                }
             }
         };
 
